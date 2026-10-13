@@ -95,6 +95,7 @@ import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.launch
 
 /**
  * Full-screen CarPlay host. It renders decoded video through a [TextureView], forwards touch to
@@ -364,6 +365,7 @@ class CarPlayHostActivity : ComponentActivity() {
     private var hotspotStatus = HotspotStatus(state = "off")
     private var menuOpen = false
     private var darkMode = false
+    private var librehuNightJob: kotlinx.coroutines.Job? = null
     private var activeAirPlaySession: AirPlaySession? = null
     private var activeScreenStreamTypes = mutableSetOf<Int>()
     private var handshakeResetInProgress = false
@@ -456,7 +458,23 @@ class CarPlayHostActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         LibreHuVehicle.start(this)
         initializeSessionLog()
-        darkMode = isDarkMode(resources.configuration.uiMode)
+        // LibreHU fork: CarPlay's day / night from LibreHU-service (headlights) or the launcher, else Android's.
+        com.shilapi.xcertplay.librehu.LibreHuCarPlay.start(this)
+        darkMode = com.shilapi.xcertplay.librehu.LibreHuCarPlay.night(isDarkMode(resources.configuration.uiMode))
+        librehuNightJob?.cancel()
+        librehuNightJob =
+            kotlinx.coroutines.MainScope().launch {
+                kotlinx.coroutines.flow.combine(
+                    com.shilapi.xcertplay.librehu.LibreHuCarPlay.serviceNight,
+                    com.shilapi.xcertplay.librehu.LibreHuCarPlay.theme,
+                ) { _, _ -> com.shilapi.xcertplay.librehu.LibreHuCarPlay.night(isDarkMode(resources.configuration.uiMode)) }
+                    .collect { night ->
+                        if (night != darkMode) {
+                            darkMode = night
+                            syncAirPlayDarkMode()
+                        }
+                    }
+            }
         advancedAudioChannelMappingSupported =
             resources.getBoolean(R.bool.config_advanced_audio_channel_mapping)
         airPlayIdentity = AirPlayPersistence.loadIdentity(this)
@@ -650,7 +668,7 @@ class CarPlayHostActivity : ComponentActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        val nextDarkMode = isDarkMode(newConfig.uiMode)
+        val nextDarkMode = com.shilapi.xcertplay.librehu.LibreHuCarPlay.night(isDarkMode(newConfig.uiMode))
         if (nextDarkMode != darkMode) {
             darkMode = nextDarkMode
             syncAirPlayDarkMode()
@@ -664,6 +682,7 @@ class CarPlayHostActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        librehuNightJob?.cancel()
         CarPlayBackgroundSession.audioFocus(this).release(this)
         stopMicrophoneGainTest()
         mainHandler.removeCallbacks(applyDisplaySize)
@@ -3569,6 +3588,7 @@ class CarPlayHostActivity : ComponentActivity() {
                     }
                     activeAirPlaySession = session
                     syncAirPlayDarkMode()
+                    com.shilapi.xcertplay.librehu.LibreHuCarPlay.reportSession(this@CarPlayHostActivity, "active")
                     if (menuOpen) return@runOnUiThread
                     appendLog("AirPlay session active")
                 }
@@ -3577,6 +3597,7 @@ class CarPlayHostActivity : ComponentActivity() {
             override fun onSessionEnded(session: AirPlaySession) {
                 runOnUiThread {
                     if (activeAirPlaySession === session) activeAirPlaySession = null
+                    com.shilapi.xcertplay.librehu.LibreHuCarPlay.reportSession(this@CarPlayHostActivity, "ended")
                     if (menuOpen || controllerGeneration != restartGeneration) {
                         return@runOnUiThread
                     }
@@ -3628,6 +3649,11 @@ class CarPlayHostActivity : ComponentActivity() {
             updateHotspotStatus(status)
             val description = status.describe()
             setConnectionStage(description)
+            com.shilapi.xcertplay.librehu.LibreHuCarPlay.reportSession(
+                this,
+                if (status is CarPlayStatus.Failed) "failed" else "connecting",
+                description,
+            )
             when (status) {
                 is CarPlayStatus.Failed -> {
                     failHandshake("CarPlay failed", description)

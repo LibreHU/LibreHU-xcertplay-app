@@ -9,6 +9,8 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -40,6 +42,23 @@ fun XcertplayTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    // LibreHU fork: light / dark and accent of LibreHU Launcher when it is installed.
+    val launcher by com.shilapi.xcertplay.librehu.LibreHuCarPlay.theme.collectAsState()
+    launcher?.let { t ->
+        val accent = androidx.compose.ui.graphics.Color(t.accent)
+        val onAccent = if (t.dark) androidx.compose.ui.graphics.Color(0xFF202124) else androidx.compose.ui.graphics.Color.White
+        MaterialTheme(
+            colorScheme =
+                if (t.dark) {
+                    darkColorScheme(primary = accent, secondary = accent, tertiary = accent, onPrimary = onAccent, onSecondary = onAccent)
+                } else {
+                    lightColorScheme(primary = accent, secondary = accent, tertiary = accent, onPrimary = onAccent, onSecondary = onAccent)
+                },
+            typography = Typography,
+            content = content
+        )
+        return
+    }
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current

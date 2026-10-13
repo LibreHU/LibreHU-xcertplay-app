@@ -21,6 +21,14 @@ pour les autoradios LibreHU (AC8257 / UJC201). Licence inchangee : **GPL-3.0** (
   vraies adresses Bluetooth et Wi-Fi de l'autoradio (Android les cache aux applis : xcertplay envoyait
   `02:00:00:00:00:01`, ce qui gene l'appairage sans fil). Lu au demarrage et a chaque changement ; une valeur vide
   garde le reglage de xcertplay. En sans fil, l'identifiant reste le BSSID du point d'acces quand il est connu.
+- **Theme et nuit LibreHU** (`librehu/LibreHuCarPlay.kt`) : les ecrans de l'appli prennent le mode clair / sombre
+  et la couleur d'accent de LibreHU Launcher (`content://org.librehu.launcher.theme/theme`, diffusion
+  `org.librehu.action.THEME_CHANGED`). Le jour / nuit envoye a l'iPhone (`setNightMode` d'AirPlay) suit, dans
+  l'ordre : LibreHU-service (phares, `org.librehu.carplay.action.SET_NIGHT_MODE`, accepte seulement des applis
+  signees LibreHU : permission signature `org.librehu.carplay.permission.CONFIGURE`), sinon le mode sombre du
+  launcher, sinon celui d'Android.
+- **Etat de la session** diffuse pour LibreHU-service (`org.librehu.carplay.SESSION_STATE`, `state` = connecting /
+  active / ended / failed, `detail`) : onglet Projection → CarPlay du service.
 - **Numero de version** : `versionCode` = celui d'amont (1400) + nombre de commits du depot. LibreHU Apps propose une
   mise a jour quand le `versionCode` augmente ; celui d'amont ne bougeait pas d'un build du fork a l'autre, la mise a
   jour n'apparaissait donc pas. Le `versionName` reste celui d'amont, suivi du commit dans `release.txt`.

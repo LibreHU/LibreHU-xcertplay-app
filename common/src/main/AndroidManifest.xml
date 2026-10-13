@@ -4,6 +4,14 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- LibreHU: the car's name, make, model and addresses from LibreHU-service (signature permission). -->
     <uses-permission android:name="org.librehu.permission.VEHICLE" />
+    <!-- LibreHU: commands from LibreHU-service (night from the headlights), apps signed with the LibreHU key only. -->
+    <permission
+        android:name="${applicationId}.permission.CONFIGURE"
+        android:protectionLevel="signature" />
+    <!-- LibreHU: launcher theme provider (Android 11+ package visibility). -->
+    <queries>
+        <provider android:authorities="org.librehu.launcher.theme" />
+    </queries>
 
     <application>
 
