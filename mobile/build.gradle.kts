@@ -3,6 +3,17 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// LibreHU fork: LibreHU Apps updates when versionCode grows, and upstream's stays the same between two builds of the
+// fork. versionCode = upstream's + number of commits: grows with every commit, upstream bumps included.
+fun librehuCommitCount(dir: File): Int =
+    try {
+        val p = ProcessBuilder("git", "rev-list", "--count", "HEAD").directory(dir).redirectErrorStream(true).start()
+        val text = p.inputStream.bufferedReader().readText().trim()
+        if (p.waitFor() == 0) text.toIntOrNull() ?: 0 else 0
+    } catch (e: Exception) {
+        0
+    }
+
 android {
     namespace = "com.shilapi.xcertplay"
     compileSdk {
@@ -14,7 +25,7 @@ android {
         applicationId = "org.librehu.carplay"
         minSdk = 28
         targetSdk = 37
-        versionCode = 1400
+        versionCode = 1400 + librehuCommitCount(rootDir)
         versionName = "1.4.0"
         testInstrumentationRunner = "com.shilapi.xcertplay.CarPlayMediaServiceLifecycleTest"
     }

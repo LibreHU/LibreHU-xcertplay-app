@@ -21,6 +21,9 @@ pour les autoradios LibreHU (AC8257 / UJC201). Licence inchangee : **GPL-3.0** (
   vraies adresses Bluetooth et Wi-Fi de l'autoradio (Android les cache aux applis : xcertplay envoyait
   `02:00:00:00:00:01`, ce qui gene l'appairage sans fil). Lu au demarrage et a chaque changement ; une valeur vide
   garde le reglage de xcertplay. En sans fil, l'identifiant reste le BSSID du point d'acces quand il est connu.
+- **Numero de version** : `versionCode` = celui d'amont (1400) + nombre de commits du depot. LibreHU Apps propose une
+  mise a jour quand le `versionCode` augmente ; celui d'amont ne bougeait pas d'un build du fork a l'autre, la mise a
+  jour n'apparaissait donc pas. Le `versionName` reste celui d'amont, suivi du commit dans `release.txt`.
 - **CI** (`.github/workflows/librehu.yml`) : APK `mobile` en release, pre-release continue `latest-<branche>` avec
   `release.txt` (LibreHU Apps) ; le workflow de xcertplay (qui exige ses secrets de signature) est retire.
 
