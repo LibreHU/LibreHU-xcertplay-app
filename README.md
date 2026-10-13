@@ -1,3 +1,6 @@
+> **Fork LibreHU** : paquet `org.librehu.carplay`, signe avec la cle LibreHU. Voir [README_LIBREHU.md](README_LIBREHU.md).
+> Projet d'origine : [xcertplay](https://github.com/shilapi/xcertplay).
+
 <div align="center">
   <img src="https://raw.githubusercontent.com/shilapi/xcertplay/refs/heads/master/asset/xcertplay_small.png" width="180" height="180" alt="xcertplay icon" />
 <h1><strong><font size="6">xcertplay</font></strong></h1>

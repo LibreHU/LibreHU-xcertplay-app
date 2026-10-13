@@ -10,7 +10,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.shilapi.xcertplay"
+        // LibreHU fork: its own package (installs beside xcertplay), signed with the LibreHU key.
+        applicationId = "org.librehu.carplay"
         minSdk = 28
         targetSdk = 37
         versionCode = 1400
@@ -22,17 +23,17 @@ android {
         create("release") {
             storeFile = file(
                 providers.environmentVariable("ANDROID_KEYSTORE_PATH")
-                    .getOrElse("missing-release-keystore.jks"),
+                    .getOrElse(rootProject.file("keystore/librehu.jks").path),
             )
-            storePassword = providers.environmentVariable("ANDROID_KEYSTORE_PASSWORD").getOrElse("")
-            keyAlias = providers.environmentVariable("ANDROID_KEY_ALIAS").getOrElse("")
-            keyPassword = providers.environmentVariable("ANDROID_KEY_PASSWORD").getOrElse("")
+            storePassword = providers.environmentVariable("ANDROID_KEYSTORE_PASSWORD").getOrElse("librehu")
+            keyAlias = providers.environmentVariable("ANDROID_KEY_ALIAS").getOrElse("librehu")
+            keyPassword = providers.environmentVariable("ANDROID_KEY_PASSWORD").getOrElse("librehu")
         }
     }
 
     buildTypes {
         debug {
-            if (providers.environmentVariable("ANDROID_KEYSTORE_PATH").isPresent) {
+            if (providers.environmentVariable("ANDROID_KEYSTORE_PATH").isPresent || rootProject.file("keystore/librehu.jks").exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
