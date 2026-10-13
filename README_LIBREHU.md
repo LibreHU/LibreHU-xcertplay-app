@@ -11,6 +11,9 @@ pour les autoradios LibreHU (AC8257 / UJC201). Licence inchangee : **GPL-3.0** (
 - **CI** (`.github/workflows/librehu.yml`) : APK `mobile` en release, pre-release continue `latest-<branche>` avec
   `release.txt` (LibreHU Apps) ; le workflow de xcertplay (qui exige ses secrets de signature) est retire.
 
+Les Actions GitHub d'un fork sont desactivees au depart : les activer dans l'onglet Actions du depot pour que la
+CI publie l'APK.
+
 ## Puce MFi de l'UJC201 (a valider sur l'unite)
 - La puce d'authentification Apple est sur un bus I2C du SoC ; la ROM stock (`iapd`, `libcoprocessor.so`) lit le bus
   et l'adresse dans la **metazone** et ouvre `/dev/i2c-N` (voir `docs/projection_stock.md` du depot device). Choisir
