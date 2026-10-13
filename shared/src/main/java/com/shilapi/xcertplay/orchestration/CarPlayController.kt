@@ -584,6 +584,14 @@ class CarPlayController(
     private fun openLinuxMfi() {
         executor.execute {
             try {
+                if (config.linuxI2cPath == MfiRuntime.AUTO_I2C_PATH) {
+                    val match = MfiRuntime.scanLinuxBuses()
+                    mfiSession = MfiSession(match.client, match.transport)
+                    debugLog("mfi Linux I2C coprocessor found path=${match.path} address=0x${match.client.address7Bit.toString(16)}")
+                    onStatus(CarPlayStatus.MfiReady)
+                    startPhone()
+                    return@execute
+                }
                 val transport = LinuxI2cTransport.open(config.linuxI2cPath!!)
                 try {
                     mfiSession = MfiSession(MfiRuntime.scan(transport), transport)

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.shilapi.xcertplay.mfi.MfiProtocolMajorResult
 import com.shilapi.xcertplay.mfi.MfiSelfCheck
 import com.shilapi.xcertplay.mfi.MfiSelfCheckResult
+import com.shilapi.xcertplay.orchestration.MfiRuntime
 import com.shilapi.xcertplay.transport.LinuxI2cTransport
 import com.shilapi.xcertplay.ui.theme.XcertplayTheme
 import java.util.concurrent.ExecutorService
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             XcertplayTheme {
-                var devicePath by remember { mutableStateOf("/dev/i2c-1") }
+                var devicePath by remember { mutableStateOf(MfiRuntime.AUTO_I2C_PATH) }
                 Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
                     Column(
                         modifier = Modifier.padding(padding).padding(24.dp),
@@ -77,7 +78,14 @@ class MainActivity : ComponentActivity() {
         status = DiagnosticStatus.Running
         executor.execute {
             val next = try {
-                LinuxI2cTransport.open(devicePath).use { MfiSelfCheck(it).run() }
+                // "auto": the bus where the coprocessor answers.
+                val path =
+                    if (devicePath.trim() == MfiRuntime.AUTO_I2C_PATH) {
+                        MfiRuntime.scanLinuxBuses().let { match -> match.transport.close(); match.path }
+                    } else {
+                        devicePath.trim()
+                    }
+                LinuxI2cTransport.open(path).use { MfiSelfCheck(it).run() }
                     .let { DiagnosticStatus.Result(it) }
             } catch (error: LinkageError) {
                 DiagnosticStatus.Failure(error.message ?: "I2C native library is unavailable")

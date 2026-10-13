@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- LibreHU: the car's name, make, model and addresses from LibreHU-service (signature permission). -->
+    <uses-permission android:name="org.librehu.permission.VEHICLE" />
 
     <application>
 

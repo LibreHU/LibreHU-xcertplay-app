@@ -66,6 +66,7 @@ import com.shilapi.xcertplay.airplay.AirPlaySessionListener
 import com.shilapi.xcertplay.airplay.CarPlayMediaEngine
 import com.shilapi.xcertplay.airplay.SafeAreaRect
 import com.shilapi.xcertplay.host.R
+import com.shilapi.xcertplay.librehu.LibreHuVehicle
 import com.shilapi.xcertplay.location.AndroidCarPlayLocationProvider
 import com.shilapi.xcertplay.media.AndroidMediaSink
 import com.shilapi.xcertplay.media.CarPlayTouchMapper
@@ -453,6 +454,7 @@ class CarPlayHostActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        LibreHuVehicle.start(this)
         initializeSessionLog()
         darkMode = isDarkMode(resources.configuration.uiMode)
         advancedAudioChannelMappingSupported =
@@ -3352,18 +3354,20 @@ class CarPlayHostActivity : ComponentActivity() {
             it.override(AirPlayDisplayConfig(it.width, it.height, widthPhysicalMm = widthPhysicalMm, fps = fps,
                 primaryInputDevice = 0))
         }
+        // LibreHU: the car described once in LibreHU-service (name, make, model, side, real addresses).
+        val car = LibreHuVehicle.current
         return AirPlayConfig(
-            deviceName = "xcertplay",
-            deviceId = "02:00:00:00:00:02",
-            btMac = "02:00:00:00:00:01",
+            deviceName = car?.name?.takeIf { it.isNotBlank() } ?: "xcertplay",
+            deviceId = car?.wifiMac?.takeIf { it.isNotBlank() } ?: "02:00:00:00:00:02",
+            btMac = car?.bluetoothMac?.takeIf { it.isNotBlank() } ?: "02:00:00:00:00:01",
             sourceVersion = "950.7.1",
             main = display,
             cluster = cluster,
-            rightHandDrive = rightHandDrive,
+            rightHandDrive = car?.takeIf { it.driverSide.isNotBlank() }?.rightHandDrive ?: rightHandDrive,
             hevc = hevcEnabled,
             microphone = microphoneAvailable,
-            manufacturer = normalizedManufacturer(),
-            model = normalizedModel(),
+            manufacturer = car?.make?.takeIf { it.isNotBlank() } ?: normalizedManufacturer(),
+            model = car?.model?.takeIf { it.isNotBlank() } ?: normalizedModel(),
             oemLabel = oemLabel,
             icons = listOf(loadAirPlayIcon()),
         )

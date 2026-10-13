@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">xcertplay</string>
+    <!-- LibreHU: name under the icon (the app is the head unit's CarPlay receiver). -->
+    <string name="app_name" translatable="false">CarPlay</string>
 </resources>

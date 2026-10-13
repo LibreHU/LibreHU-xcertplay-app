@@ -78,7 +78,8 @@ object AirPlayPersistence {
     const val DEFAULT_MANUFACTURER = "xcertplay"
     const val DEFAULT_MODEL = "xcertplay"
     const val DEFAULT_OEM_LABEL = ""
-    const val DEFAULT_MFI_I2C_PATH = "/dev/i2c-1"
+    /** "auto": every /dev/i2c-N this app can open is probed for the coprocessor (LibreHU: the head unit's own chip). */
+    const val DEFAULT_MFI_I2C_PATH = "auto"
 
     fun loadWebDisplay(context: Context, type: Int): CarPlayWebDisplayConfig {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -196,7 +197,7 @@ object AirPlayPersistence {
     fun loadMfiTarget(context: Context): MfiTarget {
         val stored = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getString(KEY_MFI_TARGET, null)
-        return MfiTarget.entries.firstOrNull { it.name == stored } ?: MfiTarget.USB_CH341
+        return MfiTarget.entries.firstOrNull { it.name == stored } ?: MfiTarget.I2C
     }
 
     fun saveMfiTarget(context: Context, target: MfiTarget) {

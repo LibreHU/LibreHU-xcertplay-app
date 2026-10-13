@@ -21,6 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Xcertplay">
 
+        <!-- LibreHU: white glyph that the LibreHU launcher draws in the theme colours. -->
+        <meta-data
+            android:name="org.librehu.themed_icon"
+            android:resource="@drawable/librehu_launcher_glyph" />
+
         <!-- It declares support for Android Automotive OS. -->
         <meta-data
             android:name="com.android.automotive"
