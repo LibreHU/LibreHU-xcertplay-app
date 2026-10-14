@@ -23,6 +23,9 @@ import kotlinx.coroutines.flow.asStateFlow
  *   night / day / auto), else the launcher's dark mode, else Android's ([night]).
  * - **Session state** for LibreHU-service and the launcher ([ACTION_SESSION_STATE], `state` = connecting / active /
  *   ended / failed, `detail`).
+ * - **The iPhone's details** for LibreHU-service only ([ACTION_PHONE_INFO]): name, model, iOS, Bluetooth address,
+ *   battery level / charging / external power, cycle count, temperature, capacities, voltage, current (Lockdown and
+ *   iAP2, see `IphoneInfoBus`); `connected` = false when the iPhone is gone.
  *
  * The service's commands are accepted only from apps holding the signature permission
  * `<applicationId>.permission.CONFIGURE` (signed with the LibreHU key).
@@ -33,6 +36,8 @@ object LibreHuCarPlay {
     private const val THEME_CHANGED = "org.librehu.action.THEME_CHANGED"
     const val ACTION_SET_NIGHT_MODE = "org.librehu.carplay.action.SET_NIGHT_MODE"
     const val ACTION_SESSION_STATE = "org.librehu.carplay.SESSION_STATE"
+    const val ACTION_PHONE_INFO = "org.librehu.carplay.PHONE_INFO"
+    private const val SERVICE_PACKAGE = "org.librehu.service"
 
     /** Launcher theme: dark and accent (ARGB); null without LibreHU Launcher. */
     data class LauncherTheme(
@@ -57,6 +62,7 @@ object LibreHuCarPlay {
         started = true
         val app = context.applicationContext
         val main = Handler(Looper.getMainLooper())
+        IphoneInfoBus.listener = { info -> reportPhone(app, info) }
         if (app.packageManager.resolveContentProvider(THEME_URI.authority!!, 0) != null) {
             Thread({ readTheme(app) }, "librehu-theme").start()
             runCatching {
@@ -105,6 +111,31 @@ object LibreHuCarPlay {
             IntentFilter(ACTION_SET_NIGHT_MODE),
             "${app.packageName}.permission.CONFIGURE",
         )
+    }
+
+    /** The iPhone's details to LibreHU-service (its package only: name and Bluetooth address are personal). */
+    private fun reportPhone(
+        context: Context,
+        info: com.shilapi.xcertplay.transport.IphoneDeviceInfo?,
+    ) {
+        val i = Intent(ACTION_PHONE_INFO).setPackage(SERVICE_PACKAGE).putExtra("connected", info != null)
+        if (info != null) {
+            info.name?.let { i.putExtra("name", it) }
+            info.productType?.let { i.putExtra("model", it) }
+            info.iosVersion?.let { i.putExtra("os", it) }
+            info.buildVersion?.let { i.putExtra("build", it) }
+            info.bluetoothAddress?.let { i.putExtra("bt", it) }
+            info.batteryLevel?.let { i.putExtra("level", it) }
+            info.charging?.let { i.putExtra("charging", it) }
+            info.externalPower?.let { i.putExtra("external_power", it) }
+            info.cycleCount?.let { i.putExtra("cycles", it) }
+            info.temperatureC?.let { i.putExtra("temperature", it) }
+            info.designCapacityMah?.let { i.putExtra("design_mah", it) }
+            info.maxCapacityMah?.let { i.putExtra("max_mah", it) }
+            info.voltageMv?.let { i.putExtra("voltage_mv", it) }
+            info.currentMa?.let { i.putExtra("current_ma", it) }
+        }
+        runCatching { context.sendBroadcast(i) }
     }
 
     /** Tells LibreHU-service and the launcher where the CarPlay session is. */

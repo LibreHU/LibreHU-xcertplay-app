@@ -55,8 +55,11 @@ commentaire.
 | `mobile/src/main/AndroidManifest.xml`, `automotive/src/main/AndroidManifest.xml` | icone thémable (`org.librehu.themed_icon`) |
 | `common/src/main/AndroidManifest.xml` | permission signature `org.librehu.carplay.permission.CONFIGURE` declaree ; `org.librehu.permission.VEHICLE` demandee ; visibilite des fournisseurs LibreHU (theme du launcher, fiche voiture) |
 | `common/.../librehu/LibreHuVehicle.kt` (nouveau) | fiche voiture de LibreHU-service (nom, marque, modele, cote conducteur, vraies adresses Bluetooth / Wi-Fi), derniere fiche gardee et servie des le demarrage |
-| `common/.../librehu/LibreHuCarPlay.kt` (nouveau) | theme et accent du launcher, nuit de CarPlay commandee par LibreHU-service (phares), etat de la session diffuse |
+| `common/.../librehu/LibreHuCarPlay.kt` (nouveau) | theme et accent du launcher, nuit de CarPlay commandee par LibreHU-service (phares), etat de la session diffuse, infos de l'iPhone envoyees a LibreHU-service seul (`org.librehu.carplay.PHONE_INFO`, paquet `org.librehu.service`) |
 | `common/.../CarPlayHostActivity.kt` | nom, marque et modele de la voiture dans la configuration AirPlay **et** dans l'identification iAP2 (nom affiche sur l'iPhone) ; adresses reelles ; mode nuit ; rapports de session ; demarrage de `LibreHuVehicle` / `LibreHuCarPlay` |
+| `shared/.../transport/LockdownDeviceInfoClient.kt` (nouveau) | infos de l'iPhone par la session Lockdown deja appairee pour CarPlay filaire, comme libimobiledevice / pymobiledevice3 : `GetValue` (nom, modele `ProductType`, iOS, adresse Bluetooth), domaine `com.apple.mobile.battery` (niveau, charge, alimentation), service `com.apple.mobile.diagnostics_relay` requete `IORegistry` classe `IOPMPowerSource` (cycles, temperature, capacites, tension, courant) ; relu toutes les 60 s |
+| `shared/.../transport/LockdownPlistChannel.kt` | plist : `<array>`, `<real>`, `<date>` lus (et ecrits), necessaires aux reponses de diagnostic |
+| `shared/.../librehu/IphoneInfoBus.kt` (nouveau), `shared/.../orchestration/CarPlayController.kt` | iAP2 `DeviceInformationUpdate` (0x4E09, nom), `PowerUpdate` (0xAE01 : chargeur externe, etat de charge, niveau), `DeviceTransportIdentifier` (0x4E0E, adresse Bluetooth) fusionnes avec les infos Lockdown ; effaces a la fin de la session |
 | `common/.../ui/theme/Theme.kt` | ecrans Compose au clair / sombre et a l'accent du launcher |
 | `common/.../AirPlayPersistence.kt` | cible MFi par defaut = I2C, peripherique I2C par defaut = `auto` |
 | `common/.../MainActivity.kt` | auto-test MFi sur le bus trouve automatiquement |

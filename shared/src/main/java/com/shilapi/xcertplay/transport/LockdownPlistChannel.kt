@@ -20,6 +20,13 @@ sealed class LockdownPlistValue {
         val bytes: ByteArray
             get() = value.copyOf()
     }
+
+    // LibreHU: device information and diagnostics answers (GetValue, IORegistry) also carry these.
+    data class Array(val items: List<LockdownPlistValue>) : LockdownPlistValue()
+    data class Real(val value: Double) : LockdownPlistValue()
+
+    /** ISO 8601 text, as written in the plist. */
+    data class Date(val value: String) : LockdownPlistValue()
 }
 
 /**
@@ -219,6 +226,20 @@ class LockdownPlistChannel(
                     throw IphoneUsbException.Protocol("Invalid base64 Lockdown plist data")
                 }
             }
+            "array" -> {
+                val items = ArrayList<LockdownPlistValue>()
+                while (parser.nextTag() == XmlPullParser.START_TAG) {
+                    if (items.size == MAXIMUM_DICTIONARY_ENTRIES) throw IphoneUsbException.Protocol("Lockdown plist array too long")
+                    items += parseValue(parser, depth + 1)
+                }
+                if (parser.name != "array") throw IphoneUsbException.Protocol("Invalid Lockdown plist array")
+                LockdownPlistValue.Array(items)
+            }
+            "real" -> LockdownPlistValue.Real(
+                simpleText(parser, "real").trim().toDoubleOrNull()
+                    ?: throw IphoneUsbException.Protocol("Invalid Lockdown plist real"),
+            )
+            "date" -> LockdownPlistValue.Date(simpleText(parser, "date").trim())
             else -> throw IphoneUsbException.Protocol("Unsupported Lockdown plist value <${parser.name}>")
         }
     }
@@ -251,6 +272,13 @@ class LockdownPlistChannel(
             is LockdownPlistValue.Data -> append("<data>")
                 .append(Base64.getEncoder().encodeToString(value.bytes))
                 .append("</data>")
+            is LockdownPlistValue.Array -> {
+                append("<array>")
+                value.items.forEach { appendValue(it, depth + 1) }
+                append("</array>")
+            }
+            is LockdownPlistValue.Real -> append("<real>").append(value.value).append("</real>")
+            is LockdownPlistValue.Date -> append("<date>").appendEscaped(value.value).append("</date>")
         }
     }
 

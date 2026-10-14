@@ -30,10 +30,12 @@ import com.shilapi.xcertplay.airplay.AirPlaySessionListener
 import com.shilapi.xcertplay.airplay.PairingStore
 import com.shilapi.xcertplay.iap2.message.Iap2HidMessages
 import com.shilapi.xcertplay.iap2.message.Iap2MediaRemoteCommand
+import com.shilapi.xcertplay.iap2.message.Iap2Messages
 import com.shilapi.xcertplay.iap2.message.Iap2NowPlayingAccumulator
 import com.shilapi.xcertplay.iap2.session.Iap2FileTransferReceiver
 import com.shilapi.xcertplay.iap2.session.Iap2Session
 import com.shilapi.xcertplay.iap2.wire.Iap2Frame
+import com.shilapi.xcertplay.librehu.IphoneInfoBus
 import com.shilapi.xcertplay.media.CarPlayMediaSessionBridge
 import com.shilapi.xcertplay.mfi.Iap2MfiAuthenticationClient
 import com.shilapi.xcertplay.mfi.LocalMfiAuthenticationClient
@@ -72,7 +74,9 @@ import com.shilapi.xcertplay.transport.IphoneUsbException
 import com.shilapi.xcertplay.transport.IphoneUsbHost
 import com.shilapi.xcertplay.transport.IphoneUsbMatcher
 import com.shilapi.xcertplay.transport.LinuxI2cTransport
+import com.shilapi.xcertplay.transport.IphoneDeviceInfo
 import com.shilapi.xcertplay.transport.LockdownCarKitClient
+import com.shilapi.xcertplay.transport.LockdownDeviceInfoClient
 import com.shilapi.xcertplay.transport.LockdownPairingClient
 import com.shilapi.xcertplay.transport.LockdownPairRecord
 import com.shilapi.xcertplay.transport.NcmFunctionDiscovery
@@ -193,6 +197,7 @@ class CarPlayController(
     @Volatile private var ch341Host: Ch341UsbHost? = null
     @Volatile private var mfiSession: MfiSession? = null
     @Volatile private var mux: Iap2UsbMuxHost? = null
+    @Volatile private var deviceInfoThread: Thread? = null
     @Volatile private var csm: Iap2Session? = null
     @Volatile private var activeSession: AirPlaySession? = null
     @Volatile private var hotspot: WirelessHotspotManager? = null
@@ -349,12 +354,77 @@ class CarPlayController(
     }
 
     private fun onIap2Incoming(frame: Iap2Frame) {
+        // LibreHU: the iPhone's name, battery and Bluetooth address for LibreHU-service.
+        when (frame.messageId) {
+            IAP2_DEVICE_INFORMATION_UPDATE,
+            IAP2_POWER_UPDATE,
+            IAP2_DEVICE_TRANSPORT_IDENTIFIER,
+            -> {
+                runCatching { onIphoneNotification(frame) }.onFailure { debugLog("Could not decode iAP2 0x${frame.messageId.toString(16)}", it) }
+                return
+            }
+        }
         if (frame.messageId != NOW_PLAYING_UPDATE) return
         try {
             CarPlayMediaSessionBridge.publish(this, nowPlaying.update(frame))
         } catch (error: RuntimeException) {
             debugLog("Could not decode iAP2 NowPlayingUpdate", error)
         }
+    }
+
+    /** LibreHU: DeviceInformationUpdate (name), PowerUpdate (battery), DeviceTransportIdentifier (Bluetooth). */
+    private fun onIphoneNotification(frame: Iap2Frame) {
+        val body = Iap2Messages.reader(frame)
+        when (frame.messageId) {
+            IAP2_DEVICE_INFORMATION_UPDATE -> IphoneInfoBus.merge(IphoneDeviceInfo(name = body.optionalString(0)))
+            IAP2_DEVICE_TRANSPORT_IDENTIFIER -> IphoneInfoBus.merge(IphoneDeviceInfo(bluetoothAddress = body.optionalString(0)))
+            IAP2_POWER_UPDATE -> {
+                // 4 IsExternalChargerConnected, 5 BatteryChargingState (0 disabled, 1 charging, 2 charged),
+                // 6 BatteryChargeLevel (u16; 0..65535 for 0..100 %, small values taken as percent).
+                val level = body.optionalU16(6)?.let { if (it <= 100) it else it * 100 / 65535 }
+                IphoneInfoBus.merge(
+                    IphoneDeviceInfo(
+                        batteryLevel = level,
+                        charging = body.optionalU8(5)?.let { it == 1 },
+                        externalPower = body.optionalBool(4),
+                    ),
+                )
+            }
+        }
+    }
+
+    /** LibreHU: reads the iPhone's details through Lockdown now and then while this USBMUX link lives. */
+    private fun startDeviceInfoPolling(
+        muxHost: Iap2UsbMuxHost,
+        pairRecord: LockdownPairRecord,
+    ) {
+        deviceInfoThread?.interrupt()
+        deviceInfoThread =
+            Thread(
+                {
+                    val client = LockdownDeviceInfoClient(muxHost)
+                    try {
+                        // After the CarPlay bring-up, which owns the first seconds of the link.
+                        Thread.sleep(DEVICE_INFO_FIRST_DELAY_MILLIS)
+                        while (!closed && mux === muxHost) {
+                            try {
+                                IphoneInfoBus.merge(client.read(pairRecord, config.label))
+                                debugLog("iPhone details read through Lockdown")
+                            } catch (error: InterruptedException) {
+                                throw error
+                            } catch (error: Throwable) {
+                                debugLog("iPhone details: ${error.message ?: error.javaClass.simpleName}")
+                            }
+                            Thread.sleep(DEVICE_INFO_INTERVAL_MILLIS)
+                        }
+                    } catch (_: InterruptedException) {
+                    }
+                },
+                "librehu-iphone-info",
+            ).apply {
+                isDaemon = true
+                start()
+            }
     }
 
     private fun activateMediaRemote(session: Iap2Session) {
@@ -434,6 +504,9 @@ class CarPlayController(
             if (closed) return
             closed = true
         }
+        deviceInfoThread?.interrupt()
+        deviceInfoThread = null
+        IphoneInfoBus.clear()
         closeReceivers()
         stopFileTransferReceivers()
         availabilityPollGeneration.incrementAndGet()
@@ -1413,6 +1486,7 @@ class CarPlayController(
                 carKitClient.open(pairRecord, config.label)
             }
             debugLog("wired com.apple.carkit.service stream opened")
+            startDeviceInfoPolling(mux, pairRecord)
             val csm = Iap2Session.open(
                 carkit,
                 traceContext = "wired",
@@ -1966,6 +2040,13 @@ class CarPlayController(
 
     companion object {
         private const val NOW_PLAYING_UPDATE = 0x5001
+
+        // LibreHU: iPhone details (iAP2 DeviceNotifications / Power), Lockdown re-read interval.
+        private const val IAP2_DEVICE_INFORMATION_UPDATE = 0x4e09
+        private const val IAP2_DEVICE_TRANSPORT_IDENTIFIER = 0x4e0e
+        private const val IAP2_POWER_UPDATE = 0xae01
+        private const val DEVICE_INFO_INTERVAL_MILLIS = 60_000L
+        private const val DEVICE_INFO_FIRST_DELAY_MILLIS = 10_000L
         private const val MEDIA_REMOTE_SEND_TIMEOUT_MILLIS = 2_000L
         private const val HID_REPORT_HOLD_MILLIS = 50L
         private const val IAP2_IPHONE_UUID = "00000000-deca-fade-deca-deafdecacafe"
