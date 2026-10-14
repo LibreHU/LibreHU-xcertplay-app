@@ -42,6 +42,31 @@ pour les autoradios LibreHU (AC8257 / UJC201). Licence inchangee : **GPL-3.0** (
 Les Actions GitHub d'un fork sont desactivees au depart : les activer dans l'onglet Actions du depot pour que la
 CI publie l'APK.
 
+## Fichiers modifies par rapport a l'amont
+
+Base : commit amont `551895a` (xcertplay « 1.4.0 », 11/10/2026), branche locale `librehu` publiee sur `master`.
+`git diff 551895a HEAD --stat` donne la liste complete ; les modifications du code sont marquees `LibreHU` en
+commentaire.
+
+| Fichier(s) | Modification |
+|---|---|
+| `mobile/build.gradle.kts`, `automotive/build.gradle.kts` | paquet `org.librehu.carplay`, signature par la cle LibreHU, `versionCode` = 1400 + nombre de commits (`providers.exec`, compatible cache de configuration) |
+| `common/build.gradle.kts` | `kotlinx-coroutines-android` (theme du launcher et nuit de LibreHU-service en `StateFlow`) |
+| `mobile/src/main/AndroidManifest.xml`, `automotive/src/main/AndroidManifest.xml` | icone thémable (`org.librehu.themed_icon`) |
+| `common/src/main/AndroidManifest.xml` | permission signature `org.librehu.carplay.permission.CONFIGURE` declaree ; `org.librehu.permission.VEHICLE` demandee ; visibilite des fournisseurs LibreHU (theme du launcher, fiche voiture) |
+| `common/.../librehu/LibreHuVehicle.kt` (nouveau) | fiche voiture de LibreHU-service (nom, marque, modele, cote conducteur, vraies adresses Bluetooth / Wi-Fi), derniere fiche gardee et servie des le demarrage |
+| `common/.../librehu/LibreHuCarPlay.kt` (nouveau) | theme et accent du launcher, nuit de CarPlay commandee par LibreHU-service (phares), etat de la session diffuse |
+| `common/.../CarPlayHostActivity.kt` | nom, marque et modele de la voiture dans la configuration AirPlay **et** dans l'identification iAP2 (nom affiche sur l'iPhone) ; adresses reelles ; mode nuit ; rapports de session ; demarrage de `LibreHuVehicle` / `LibreHuCarPlay` |
+| `common/.../ui/theme/Theme.kt` | ecrans Compose au clair / sombre et a l'accent du launcher |
+| `common/.../AirPlayPersistence.kt` | cible MFi par defaut = I2C, peripherique I2C par defaut = `auto` |
+| `common/.../MainActivity.kt` | auto-test MFi sur le bus trouve automatiquement |
+| `shared/.../orchestration/MfiRuntime.kt`, `CarPlayController.kt` | `auto` : chaque `/dev/i2c-N` accessible est sonde aux adresses 0x10 / 0x11 pour trouver la puce MFi |
+| `common/src/main/res/values/strings.xml` | nom « CarPlay » sous l'icone |
+| `shared/src/main/res/drawable/librehu_launcher_*.xml`, `shared/src/main/res/mipmap-anydpi-v26/ic_launcher*.xml` | icone originale et glyphe thémable |
+| `keystore/librehu.jks` | cle de signature commune des applis LibreHU |
+| `.github/workflows/librehu.yml` (nouveau), `android.yml` (retire) | CI LibreHU (APK signe, `latest-master`, `release.txt`) a la place de celle d'amont |
+| `README.md`, `README_LIBREHU.md` | renvoi vers ce fichier ; ce fichier |
+
 ## Puce MFi de l'UJC201 (a valider sur l'unite)
 - La puce d'authentification Apple est sur un bus I2C du SoC ; la ROM stock (`iapd`, `libcoprocessor.so`) lit le bus
   et l'adresse dans la **metazone** et ouvre `/dev/i2c-N` (voir `docs/projection_stock.md` du depot device). Choisir
