@@ -19,8 +19,12 @@ pour les autoradios LibreHU (AC8257 / UJC201). Licence inchangee : **GPL-3.0** (
 - **Vehicule depuis LibreHU-service** (`librehu/LibreHuVehicle.kt`, permission signature
   `org.librehu.permission.VEHICLE`) : nom de la voiture (affiche sur l'iPhone), marque, modele, cote conducteur et
   vraies adresses Bluetooth et Wi-Fi de l'autoradio (Android les cache aux applis : xcertplay envoyait
-  `02:00:00:00:00:01`, ce qui gene l'appairage sans fil). Lu au demarrage et a chaque changement ; une valeur vide
-  garde le reglage de xcertplay. En sans fil, l'identifiant reste le BSSID du point d'acces quand il est connu.
+  `02:00:00:00:00:01`, ce qui gene l'appairage sans fil). Le nom, la marque et le modele vont aussi dans
+  l'identification iAP2 (nom affiche dans les reglages CarPlay de l'iPhone ; xcertplay envoyait « xcertplay »).
+  Lu au demarrage et a chaque changement ; la derniere fiche lue est gardee et servie des le demarrage (la session
+  ne part plus avec « xcertplay » avant la reponse du service). Une valeur vide garde le reglage de xcertplay. Si le
+  nom reste « xcertplay » : reinstaller CarPlay apres LibreHU-service (Android 9 n'accorde une permission signature
+  qu'a l'installation, si l'appli qui la declare est deja la). En sans fil, l'identifiant reste le BSSID du point d'acces quand il est connu.
 - **Theme et nuit LibreHU** (`librehu/LibreHuCarPlay.kt`) : les ecrans de l'appli prennent le mode clair / sombre
   et la couleur d'accent de LibreHU Launcher (`content://org.librehu.launcher.theme/theme`, diffusion
   `org.librehu.action.THEME_CHANGED`). Le jour / nuit envoye a l'iPhone (`setNightMode` d'AirPlay) suit, dans

@@ -11,6 +11,7 @@
     <!-- LibreHU: launcher theme provider (Android 11+ package visibility). -->
     <queries>
         <provider android:authorities="org.librehu.launcher.theme" />
+        <provider android:authorities="org.librehu.service.vehicle" />
     </queries>
 
     <application>

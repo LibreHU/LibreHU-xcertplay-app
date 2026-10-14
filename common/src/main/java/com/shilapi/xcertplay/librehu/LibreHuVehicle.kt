@@ -11,7 +11,9 @@ import android.util.Log
  * The car as LibreHU-service describes it (`content://org.librehu.service.vehicle/info`, signature permission
  * `org.librehu.permission.VEHICLE`): its name (shown on the iPhone), make and model, driver's side, and the head
  * unit's real Bluetooth and Wi-Fi addresses, which Android hides from ordinary apps. Read off the main thread at start
- * and on every change; [current] is null without the service, and the app then keeps its own settings.
+ * and on every change; [current] is null without the service, and the app then keeps its own settings. The last
+ * description read is kept (preferences) and given at once by [start]: the session settings built right after the
+ * start already carry the car's name, before the provider answers.
  */
 object LibreHuVehicle {
     private const val TAG = "LibreHU-Vehicle"
@@ -35,9 +37,11 @@ object LibreHuVehicle {
         private set
 
     private var observing = false
+    private const val PREFS = "librehu_vehicle"
 
     fun start(context: Context) {
         val app = context.applicationContext
+        if (current == null) current = load(app)
         Thread({ refresh(app) }, "librehu-vehicle").start()
         if (observing || app.packageManager.resolveContentProvider(URI.authority!!, 0) == null) return
         observing = true
@@ -57,7 +61,7 @@ object LibreHuVehicle {
     }
 
     private fun refresh(context: Context) {
-        current = try {
+        val read = try {
             context.contentResolver.query(URI, null, null, null, null)?.use { c ->
                 if (!c.moveToFirst()) return@use null
                 fun col(name: String) = c.getColumnIndex(name).takeIf { it >= 0 }?.let { c.getString(it) }.orEmpty().trim()
@@ -71,9 +75,43 @@ object LibreHuVehicle {
                 )
             }
         } catch (error: Exception) {
-            // No service, or one signed with another key.
+            // No service, or one signed with another key: the last description stays.
             Log.i(TAG, "read: ${error.message}")
-            null
+            return
         }
+        current = read
+        save(context, read)
+    }
+
+    private fun load(context: Context): Info? {
+        val p = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val name = p.getString("name", null) ?: return null
+        return Info(
+            name = name,
+            make = p.getString("make", "").orEmpty(),
+            model = p.getString("model", "").orEmpty(),
+            driverSide = p.getString("driver_side", "").orEmpty(),
+            bluetoothMac = p.getString("bt_mac", "").orEmpty(),
+            wifiMac = p.getString("wifi_mac", "").orEmpty(),
+        )
+    }
+
+    private fun save(
+        context: Context,
+        info: Info?,
+    ) {
+        val e = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+        if (info == null) {
+            e.clear()
+        } else {
+            e
+                .putString("name", info.name)
+                .putString("make", info.make)
+                .putString("model", info.model)
+                .putString("driver_side", info.driverSide)
+                .putString("bt_mac", info.bluetoothMac)
+                .putString("wifi_mac", info.wifiMac)
+        }
+        e.apply()
     }
 }

@@ -132,10 +132,11 @@ class CarPlayHostActivity : ComponentActivity() {
         remoteMfiToken = remoteMfiToken.takeIf { it.isNotEmpty() },
         localMfiCertificateUri = localMfiCertificateUri.takeIf { it.isNotEmpty() },
         localMfiPrivateKeyUri = localMfiPrivateKeyUri.takeIf { it.isNotEmpty() },
+        // LibreHU: the iPhone shows this name (its CarPlay settings): the car's name from LibreHU-service.
         identification = Iap2IdentificationConfig(
-            name = "xcertplay",
-            modelIdentifier = normalizedModel(),
-            manufacturer = normalizedManufacturer(),
+            name = LibreHuVehicle.current?.name?.takeIf { it.isNotBlank() } ?: "xcertplay",
+            modelIdentifier = LibreHuVehicle.current?.model?.takeIf { it.isNotBlank() } ?: normalizedModel(),
+            manufacturer = LibreHuVehicle.current?.make?.takeIf { it.isNotBlank() } ?: normalizedManufacturer(),
             serialNumber = "xcertplay",
             firmwareVersion = "1.0.0",
             hardwareVersion = "1.0",
