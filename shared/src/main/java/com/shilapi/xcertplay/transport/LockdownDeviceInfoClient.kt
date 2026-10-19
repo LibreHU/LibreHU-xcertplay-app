@@ -148,4 +148,6 @@ data class IphoneDeviceInfo(
     val maxCapacityMah: Int? = null,
     val voltageMv: Int? = null,
     val currentMa: Int? = null,
+    /** True over USB (wired CarPlay), false over Bluetooth / Wi-Fi (wireless CarPlay). */
+    val wired: Boolean? = null,
 )

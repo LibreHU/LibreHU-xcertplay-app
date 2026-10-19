@@ -3,6 +3,14 @@
 Fork de [xcertplay](https://github.com/shilapi/xcertplay) (recepteur CarPlay en appli Android, filaire et sans fil),
 pour les autoradios LibreHU (AC8257 / UJC201). Licence inchangee : **GPL-3.0** (`LICENSE`).
 
+## Filaire ou sans fil
+xcertplay fait les deux, **un seul a la fois** : interrupteur « Wireless CarPlay » de ses reglages (ouverts par le
+bouton en bas a droite ou en glissant trois doigts vers le bas), puis « Save & Reconnect ».
+- **Active** (valeur par defaut de xcertplay) : sans fil. L'iPhone doit etre appaire en Bluetooth ; l'appli ouvre le
+  point d'acces Wi-Fi puis le canal iAP2 en Bluetooth. **La prise USB est ignoree** dans ce mode.
+- **Desactive** : filaire. L'appli attend l'iPhone sur l'USB (iAP2 + USBMUX + NCM) ; c'est le seul mode ou
+  LibreHU-service recoit les details de la batterie (cycles, temperature, capacites : Lockdown passe par l'USB).
+
 ## Ce que change le fork
 - **Paquet `org.librehu.carplay`** (mobile et automotive) : s'installe a cote de xcertplay. L'identifiant de
   protocole iAP2 (`com.shilapi.xcertplay`) ne change pas.
@@ -59,7 +67,7 @@ commentaire.
 | `common/.../CarPlayHostActivity.kt` | nom, marque et modele de la voiture dans la configuration AirPlay **et** dans l'identification iAP2 (nom affiche sur l'iPhone) ; adresses reelles ; mode nuit ; rapports de session ; demarrage de `LibreHuVehicle` / `LibreHuCarPlay` |
 | `shared/.../transport/LockdownDeviceInfoClient.kt` (nouveau) | infos de l'iPhone par la session Lockdown deja appairee pour CarPlay filaire, comme libimobiledevice / pymobiledevice3 : `GetValue` (nom, modele `ProductType`, iOS, adresse Bluetooth), domaine `com.apple.mobile.battery` (niveau, charge, alimentation), service `com.apple.mobile.diagnostics_relay` requete `IORegistry` classe `IOPMPowerSource` (cycles, temperature, capacites, tension, courant) ; relu toutes les 60 s |
 | `shared/.../transport/LockdownPlistChannel.kt` | plist : `<array>`, `<real>`, `<date>` lus (et ecrits), necessaires aux reponses de diagnostic |
-| `shared/.../librehu/IphoneInfoBus.kt` (nouveau), `shared/.../orchestration/CarPlayController.kt` | iAP2 `DeviceInformationUpdate` (0x4E09, nom), `PowerUpdate` (0xAE01 : chargeur externe, etat de charge, niveau), `DeviceTransportIdentifier` (0x4E0E, adresse Bluetooth) fusionnes avec les infos Lockdown ; effaces a la fin de la session |
+| `shared/.../librehu/IphoneInfoBus.kt` (nouveau), `shared/.../orchestration/CarPlayController.kt` | iAP2 `DeviceInformationUpdate` (0x4E09, nom), `PowerUpdate` (0xAE01 : chargeur externe, etat de charge, niveau), `DeviceTransportIdentifier` (0x4E0E, adresse Bluetooth) fusionnes avec les infos Lockdown ; nom et modele de l'iPhone par AirPlay (filaire et sans fil) ; en sans fil, nom et adresse de l'iPhone connecte en Bluetooth ; `wired` (USB ou sans fil) pour LibreHU-service ; effaces a la fin de la session. Ni l'identification iAP2 ni les messages envoyes ne changent : seuls des messages deja recus sont lus |
 | `common/.../ui/theme/Theme.kt` | ecrans Compose au clair / sombre et a l'accent du launcher |
 | `common/.../AirPlayPersistence.kt` | cible MFi par defaut = I2C, peripherique I2C par defaut = `auto` |
 | `common/.../MainActivity.kt` | auto-test MFi sur le bus trouve automatiquement |

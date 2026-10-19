@@ -261,6 +261,13 @@ class CarPlayController(
                 "AirPlay device info name=${info.name} deviceId=${info.deviceId} " +
                     "wifiMac=${info.wifiMac} model=${info.model}",
             )
+            // LibreHU: name and model for LibreHU-service, wired or wireless.
+            IphoneInfoBus.merge(
+                IphoneDeviceInfo(
+                    name = info.name.takeIf { it.isNotBlank() },
+                    productType = info.model.takeIf { it.isNotBlank() },
+                ),
+            )
             uiListener?.onDeviceInfo(session, info)
         }
 
@@ -399,6 +406,7 @@ class CarPlayController(
         pairRecord: LockdownPairRecord,
     ) {
         deviceInfoThread?.interrupt()
+        IphoneInfoBus.merge(IphoneDeviceInfo(wired = true))
         deviceInfoThread =
             Thread(
                 {
@@ -1684,6 +1692,14 @@ class CarPlayController(
                     onTrace = ::debugLog,
                 ).also { csm = it }
                 debugLog("wireless iAP2 CSM channel opened address=${device.address}")
+                // LibreHU: the wireless iPhone for LibreHU-service (no Lockdown without USB).
+                IphoneInfoBus.merge(
+                    IphoneDeviceInfo(
+                        name = device.name?.takeIf { it.isNotBlank() },
+                        bluetoothAddress = device.address,
+                        wired = false,
+                    ),
+                )
                 return channel
             } catch (error: Exception) {
                 closeBluetoothBootstrapTransport()

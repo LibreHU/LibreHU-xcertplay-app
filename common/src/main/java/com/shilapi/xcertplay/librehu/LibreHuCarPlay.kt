@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
  *   ended / failed, `detail`).
  * - **The iPhone's details** for LibreHU-service only ([ACTION_PHONE_INFO]): name, model, iOS, Bluetooth address,
  *   battery level / charging / external power, cycle count, temperature, capacities, voltage, current (Lockdown and
- *   iAP2, see `IphoneInfoBus`); `connected` = false when the iPhone is gone.
+ *   iAP2, see `IphoneInfoBus`), `wired` (USB, else wireless); `connected` = false when the iPhone is gone.
  *
  * The service's commands are accepted only from apps holding the signature permission
  * `<applicationId>.permission.CONFIGURE` (signed with the LibreHU key).
@@ -134,6 +134,7 @@ object LibreHuCarPlay {
             info.maxCapacityMah?.let { i.putExtra("max_mah", it) }
             info.voltageMv?.let { i.putExtra("voltage_mv", it) }
             info.currentMa?.let { i.putExtra("current_ma", it) }
+            info.wired?.let { i.putExtra("wired", it) }
         }
         runCatching { context.sendBroadcast(i) }
     }

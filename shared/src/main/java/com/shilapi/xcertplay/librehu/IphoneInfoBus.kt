@@ -34,6 +34,7 @@ object IphoneInfoBus {
                 maxCapacityMah = update.maxCapacityMah ?: old.maxCapacityMah,
                 voltageMv = update.voltageMv ?: old.voltageMv,
                 currentMa = update.currentMa ?: old.currentMa,
+                wired = update.wired ?: old.wired,
             )
         current = next
         listener?.invoke(next)
