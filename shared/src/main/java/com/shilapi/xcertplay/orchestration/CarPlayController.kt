@@ -95,6 +95,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.min
 
 sealed class CarPlayStatus {
     data object DiscoveringMfi : CarPlayStatus()
@@ -194,6 +195,9 @@ class CarPlayController(
 
     @Volatile private var closed = false
     @Volatile private var phase = Phase.IDLE
+
+    /** LibreHU: wired sessions ended in a row without reaching CarPlay (back-off of [endWiredSession]). */
+    @Volatile private var wiredRestarts = 0
     @Volatile private var ch341Host: Ch341UsbHost? = null
     @Volatile private var mfiSession: MfiSession? = null
     @Volatile private var mux: Iap2UsbMuxHost? = null
@@ -1404,6 +1408,12 @@ class CarPlayController(
                 availabilityPollGeneration.incrementAndGet()
                 requestIphonePermission(device)
             }
+            // LibreHU: plugged again while the previous session is still being closed: start over now.
+            Phase.CONTROL, Phase.DATAPATHS ->
+                if (csm == null && mux == null) {
+                    wiredRestarts = 0
+                    startIphone()
+                }
             else -> Unit
         }
     }
@@ -1438,9 +1448,13 @@ class CarPlayController(
                     } catch (error: Throwable) {
                         result.session.close()
                         fail(error)
+                        endWiredSession()
                     }
                 }
-                is IphoneUsbHost.Iap2SessionResult.Failed -> fail(result.error)
+                is IphoneUsbHost.Iap2SessionResult.Failed -> {
+                    fail(result.error)
+                    endWiredSession()
+                }
             }
         }
     }
@@ -1466,6 +1480,7 @@ class CarPlayController(
     private fun runStack(usbSession: Iap2UsbSession, ncm: NcmUsbBridge) {
         phase = Phase.CONTROL
         var ncmOwnedLocally = true
+        var vpnDetached = false
         try {
             if (closed) return
             val mux = Iap2UsbMuxHost.open(usbSession)
@@ -1512,6 +1527,7 @@ class CarPlayController(
             debugLog("wired NCM/VPN AirPlay transport attached")
             if (closed) {
                 vpnService?.detach()
+                vpnDetached = true
                 return
             }
 
@@ -1525,6 +1541,7 @@ class CarPlayController(
                 deviceIdentifier = ncmHostMac.macString(),
             )
             onStatus(CarPlayStatus.RunningControl)
+            wiredRestarts = 0
             debugLog("wired iAP2 control starting")
             val result = Iap2WiredControlClient(csm, Iap2MfiAuthenticationClient(mfi)).run(
                 identification = config.identification,
@@ -1546,10 +1563,43 @@ class CarPlayController(
         } catch (error: Throwable) {
             debugLog("wired bring-up failed", error)
             if (!ncmOwnedLocally) vpnService?.detach()
+            vpnDetached = true
             fail(error)
         } finally {
-            if (ncmOwnedLocally) ncm.close()
+            if (ncmOwnedLocally) ncm.close() else if (!vpnDetached) vpnService?.detach()
+            // LibreHU: the iPhone was unplugged or CarPlay was left on it: back to waiting for it.
+            endWiredSession()
         }
+    }
+
+    /**
+     * LibreHU: after a wired session (iPhone unplugged, CarPlay closed on the phone, bring-up failure), closes what it
+     * used and goes back to waiting for an iPhone, so that plugging it again starts CarPlay without restarting the app
+     * (before, the controller stayed in the CONTROL phase and ignored the new USB device). Retries back off up to 30 s.
+     */
+    private fun endWiredSession() {
+        if (closed || config.transport != CarPlayTransport.WIRED) return
+        deviceInfoThread?.interrupt()
+        deviceInfoThread = null
+        stopFileTransferReceivers()
+        activeMediaRemoteSession = null
+        CarPlayMediaSessionBridge.setControlsAvailable(this, false)
+        closeBestEffort("CSM") { csm?.close() }
+        csm = null
+        closeBestEffort("USBMUX") { mux?.close() }
+        mux = null
+        IphoneInfoBus.clear()
+        val delay = min(MAXIMUM_RESTART_DELAY_MILLIS, RESTART_DELAY_MILLIS shl min(wiredRestarts, 4))
+        wiredRestarts++
+        debugLog("wired session ended; waiting for the iPhone again in ${delay} ms")
+        mainHandler.postDelayed(
+            {
+                synchronized(lifecycleLock) {
+                    if (!closed && (phase == Phase.CONTROL || phase == Phase.DATAPATHS)) startIphone()
+                }
+            },
+            delay,
+        )
     }
 
     private fun pairNewRecord(client: LockdownPairingClient): LockdownPairRecord =
@@ -2077,6 +2127,8 @@ class CarPlayController(
         private const val WIRELESS_HANDOFF_TIMEOUT_MILLIS = 45_000L
         private const val RFCOMM_CONNECT_TIMEOUT_MILLIS = 15_000L
         private const val MAXIMUM_REENUMERATION_ATTEMPTS = 2
+        private const val RESTART_DELAY_MILLIS = 2_000L
+        private const val MAXIMUM_RESTART_DELAY_MILLIS = 30_000L
         private const val EXECUTOR_CLOSE_TIMEOUT_MILLIS = 2_000L
         private const val ADAPTER_ADDRESS_PLACEHOLDER = "02:00:00:00:00:00"
         private val BLUETOOTH_ADDRESS = Regex("^[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}$")

@@ -74,6 +74,7 @@ commentaire.
 | `common/.../AirPlayPersistence.kt` | cible MFi par defaut = I2C, peripherique I2C par defaut = `auto` |
 | `common/.../MainActivity.kt` | auto-test MFi sur le bus trouve automatiquement |
 | `shared/.../orchestration/MfiRuntime.kt`, `CarPlayController.kt` | `auto` : chaque `/dev/i2c-N` accessible est sonde aux adresses 0x10 / 0x11 pour trouver la puce MFi |
+| `shared/.../orchestration/CarPlayController.kt` | **iPhone rebranché** : à la fin d'une session filaire (iPhone débranché, CarPlay quitté sur le téléphone, échec de la mise en route), USBMUX, iAP2, lecture des infos et VPN/NCM sont fermés et le contrôleur repasse en attente d'iPhone (2 s, puis jusqu'à 30 s si les essais échouent) ; un iPhone rebranché pendant la fermeture relance tout de suite. Avant, le contrôleur restait en phase de contrôle et ignorait le nouvel appareil USB jusqu'au redémarrage de l'appli |
 | `common/src/main/res/values/strings.xml` | nom « CarPlay » sous l'icone |
 | `shared/src/main/res/drawable/librehu_launcher_*.xml`, `shared/src/main/res/mipmap-anydpi-v26/ic_launcher*.xml` | icone originale et glyphe thémable |
 | `keystore/librehu.jks` | cle de signature commune des applis LibreHU |
