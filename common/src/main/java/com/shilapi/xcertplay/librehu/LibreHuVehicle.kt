@@ -10,8 +10,8 @@ import android.util.Log
 /**
  * The car as LibreHU-service describes it (`content://org.librehu.service.vehicle/info`, signature permission
  * `org.librehu.permission.VEHICLE`): its name (shown on the iPhone), make and model, driver's side, and the head
- * unit's real Bluetooth and Wi-Fi addresses, which Android hides from ordinary apps. Read off the main thread at start
- * and on every change; [current] is null without the service, and the app then keeps its own settings. The last
+ * unit's real Bluetooth and Wi-Fi addresses, which Android hides from ordinary apps. Read at start (waited for, up to
+ * 1.5 s, so that the first session has the name) and on every change; [current] is null without the service, and the app then keeps its own settings. The last
  * description read is kept (preferences) and given at once by [start]: the session settings built right after the
  * start already carry the car's name, before the provider answers.
  */
@@ -38,11 +38,17 @@ object LibreHuVehicle {
 
     private var observing = false
     private const val PREFS = "librehu_vehicle"
+    private const val SYNC_READ_MS = 1500L
 
     fun start(context: Context) {
         val app = context.applicationContext
         if (current == null) current = load(app)
-        Thread({ refresh(app) }, "librehu-vehicle").start()
+        // Read now, before the session settings are built: done in the background, the first session after the
+        // car was named (LibreHU Launcher's first setup, LibreHU-service) still went out as "xcertplay". A local
+        // provider query, a few milliseconds; the background refresh stays for a slow start of the service.
+        val t = Thread({ refresh(app) }, "librehu-vehicle")
+        t.start()
+        runCatching { t.join(SYNC_READ_MS) }
         if (observing || app.packageManager.resolveContentProvider(URI.authority!!, 0) == null) return
         observing = true
         try {

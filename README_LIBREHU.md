@@ -29,8 +29,10 @@ bouton en bas a droite ou en glissant trois doigts vers le bas), puis « Save & 
   vraies adresses Bluetooth et Wi-Fi de l'autoradio (Android les cache aux applis : xcertplay envoyait
   `02:00:00:00:00:01`, ce qui gene l'appairage sans fil). Le nom, la marque et le modele vont aussi dans
   l'identification iAP2 (nom affiche dans les reglages CarPlay de l'iPhone ; xcertplay envoyait « xcertplay »).
-  Lu au demarrage et a chaque changement ; la derniere fiche lue est gardee et servie des le demarrage (la session
-  ne part plus avec « xcertplay » avant la reponse du service). Une valeur vide garde le reglage de xcertplay. Si le
+  Lu au demarrage (attendu jusqu'a 1,5 s avant de preparer la session : lu en tache de fond, la premiere session
+  apres avoir nomme la voiture partait encore avec « xcertplay ») et a chaque changement ; la derniere fiche lue est
+  gardee et servie des le demarrage. L'iPhone garde le nom d'une voiture deja connue : « Oublier cette voiture »
+  dans ses reglages CarPlay pour voir le nouveau. Une valeur vide garde le reglage de xcertplay. Si le
   nom reste « xcertplay » : reinstaller CarPlay apres LibreHU-service (Android 9 n'accorde une permission signature
   qu'a l'installation, si l'appli qui la declare est deja la). En sans fil, l'identifiant reste le BSSID du point d'acces quand il est connu.
 - **Theme et nuit LibreHU** (`librehu/LibreHuCarPlay.kt`) : les ecrans de l'appli prennent le mode clair / sombre
