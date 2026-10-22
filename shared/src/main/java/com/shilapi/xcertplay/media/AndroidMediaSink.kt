@@ -219,6 +219,13 @@ class AndroidMediaSink(
     }
 
     companion object {
+        /**
+         * LibreHU: ask MediaTek video decoders for their low-latency mode below Android 11 (LibreHU-service, CarPlay
+         * page; on without the service).
+         */
+        @Volatile
+        var vendorLowLatency: Boolean = true
+
         fun createAudioFocus(context: Context): AudioFocusSession = AudioFocusSession(
             context.applicationContext.getSystemService(AudioManager::class.java),
         )
@@ -436,7 +443,7 @@ private class VideoDecoder(
         }
         require(csd.isNotEmpty()) { "Missing or invalid video parameter sets" }
         val parameters = VideoParameters.parse(codec, csd)
-        val format = MediaFormat.createVideoFormat(mime, parameters.width, parameters.height).apply {
+        fun buildFormat() = MediaFormat.createVideoFormat(mime, parameters.width, parameters.height).apply {
             setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, MAX_INPUT_SIZE)
             setByteBuffer("csd-0", ByteBuffer.wrap(csd))
             if (pps != null) setByteBuffer("csd-1", ByteBuffer.wrap(pps))
@@ -446,33 +453,52 @@ private class VideoDecoder(
             if (parameters.colorTransfer != -1) setInteger(MediaFormat.KEY_COLOR_TRANSFER, parameters.colorTransfer)
             setInteger(MediaFormat.KEY_PRIORITY, 0)
         }
-        val next = createDecoder(mime)
+        var format = buildFormat()
+        var next = createDecoder(mime)
+        // LibreHU: below Android 11 there is no KEY_LOW_LATENCY; MediaTek's ACodec takes "vdec-lowlatency" instead
+        // (OMX.MTK.index.param.video.LowLatencyDecode), as Moonlight and Open Headunit do. Refused, the decoder is
+        // configured again without it, which is the behaviour before this key.
+        val askLowLatency = Build.VERSION.SDK_INT < Build.VERSION_CODES.R && AndroidMediaSink.vendorLowLatency &&
+            isMediaTekDecoder(next.name)
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
                 next.codecInfo.getCapabilitiesForType(mime)
                     .isFeatureSupported(MediaCodecInfo.CodecCapabilities.FEATURE_LowLatency)
             ) format.setInteger(MediaFormat.KEY_LOW_LATENCY, 1)
+            if (askLowLatency) format.setInteger(MTK_LOW_LATENCY, 1)
             next.configure(format, surface, null, 0)
             next.start()
+            if (askLowLatency) Log.i(TAG, "video decoder low latency: $MTK_LOW_LATENCY accepted by ${next.name}")
         } catch (error: Exception) {
             next.release()
-            throw error
+            if (!askLowLatency) throw error
+            Log.w(TAG, "video decoder refused $MTK_LOW_LATENCY; configuring without it", error)
+            format = buildFormat()
+            next = createDecoder(mime)
+            try {
+                next.configure(format, surface, null, 0)
+                next.start()
+            } catch (retry: Exception) {
+                next.release()
+                throw retry
+            }
         }
-        decoder = next
+        val ready = next
+        decoder = ready
         syncGate = VideoSyncGate(codec)
         pump = VideoDecodePump(object : VideoDecodePump.Port {
-            override fun drain() = drainOutput(next)
+            override fun drain() = drainOutput(ready)
             override fun queue(bytes: ByteArray, presentationTimeUs: Long): Boolean {
-                val index = next.dequeueInputBuffer(0)
+                val index = ready.dequeueInputBuffer(0)
                 if (index < 0) {
                     inputRetries++
                     return false
                 }
-                val input = checkNotNull(next.getInputBuffer(index)) { "Missing video input buffer" }
+                val input = checkNotNull(ready.getInputBuffer(index)) { "Missing video input buffer" }
                 input.clear()
                 check(bytes.size <= input.remaining()) { "Video access unit exceeds decoder input capacity" }
                 input.put(bytes)
-                next.queueInputBuffer(index, 0, bytes.size, presentationTimeUs, 0)
+                ready.queueInputBuffer(index, 0, bytes.size, presentationTimeUs, 0)
                 inputCount++
                 return true
             }
@@ -480,7 +506,7 @@ private class VideoDecoder(
         Log.i(TAG, "video SPS parameters=$parameters negotiated=${width}x$height inputFormat=$format")
         renderedFrameLogged = false
         submittedFrameLogged = false
-        Log.i(TAG, "video decoder configured name=${next.name} mime=$mime; waiting for random access")
+        Log.i(TAG, "video decoder configured name=${ready.name} mime=$mime; waiting for random access")
     }
 
     private fun createDecoder(mime: String): MediaCodec {
@@ -648,11 +674,19 @@ private class VideoDecoder(
     }
 
     private companion object {
-        const val TAG = "xcertplay-usb"
-        const val MAX_INPUT_SIZE = 8 * 1024 * 1024
-        const val INPUT_STALL_NS = 2_000_000_000L
-        const val KEY_FRAME_REQUEST_INTERVAL_NS = 2_000_000_000L
-        val START_CODE = byteArrayOf(0x00, 0x00, 0x00, 0x01)
+        /** MediaTek's spelling of the low-latency request before KEY_LOW_LATENCY (API 30). */
+        private const val MTK_LOW_LATENCY = "vdec-lowlatency"
+
+        private fun isMediaTekDecoder(name: String): Boolean {
+            val n = name.lowercase()
+            return n.contains(".mtk.") || n.contains("mediatek")
+        }
+
+        private const val TAG = "xcertplay-usb"
+        private const val MAX_INPUT_SIZE = 8 * 1024 * 1024
+        private const val INPUT_STALL_NS = 2_000_000_000L
+        private const val KEY_FRAME_REQUEST_INTERVAL_NS = 2_000_000_000L
+        private val START_CODE = byteArrayOf(0x00, 0x00, 0x00, 0x01)
     }
 }
 

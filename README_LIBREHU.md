@@ -12,6 +12,10 @@ bouton en bas a droite ou en glissant trois doigts vers le bas), puis « Save & 
   LibreHU-service recoit les details de la batterie (cycles, temperature, capacites : Lockdown passe par l'USB).
 
 ## Ce que change le fork
+- **Video basse latence sur Android 9** : le decodeur MediaTek recoit `vdec-lowlatency` (la cle officielle
+  `KEY_LOW_LATENCY` n'existe qu'a partir d'Android 11), comme le fait Moonlight ; refusee, le decodeur est reconfigure
+  sans. Interrupteur dans LibreHU-service (Projection → CarPlay, colonne `carplay_video_low_latency` du fournisseur
+  vehicule), actif par defaut (`shared/.../media/AndroidMediaSink.kt`, `common/.../librehu/LibreHuVehicle.kt`).
 - **Paquet `org.librehu.carplay`** (mobile et automotive) : s'installe a cote de xcertplay. L'identifiant de
   protocole iAP2 (`com.shilapi.xcertplay`) ne change pas.
 - **Signe avec la cle LibreHU** (`keystore/librehu.jks`, ou `ANDROID_KEYSTORE_PATH` et les autres variables de
@@ -102,3 +106,13 @@ le logo n'est donc pas inclus dans ce depot public.
 ```
 git fetch upstream && git merge upstream/master
 ```
+
+## Optimisation (R8)
+
+L'APK publié par la CI (`assembleRelease`) est **optimisé par R8** : code et ressources réduits et optimisés, ce qui
+rend Jetpack Compose nettement plus fluide ([Compose performance](https://developer.android.com/develop/ui/compose/performance)),
+**sans renommage** (`-dontobfuscate` dans `mobile/src/main/keepRules/librehu.keep`) : les traces des journaux restent lisibles. Les
+règles gardent aussi ce qui n'est appelé que par son nom (méthodes natives, exception levée par le JNI I2C). Si
+une fonction plante avec « class / method not found », regarder `usage.txt` dans l'artefact *R8 reports* de la CI (ce
+que R8 a retiré) et ajouter une règle `-keep`.
+

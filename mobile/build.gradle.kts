@@ -51,8 +51,9 @@ android {
             }
         }
         release {
+            // LibreHU: optimised by R8 (code and resources shrunk, without renaming: src/main/keepRules/librehu.keep).
             optimization {
-                enable = false
+                enable = true
             }
             signingConfig = signingConfigs.getByName("release")
         }

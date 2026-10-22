@@ -28,6 +28,8 @@ object LibreHuVehicle {
         val driverSide: String,
         val bluetoothMac: String,
         val wifiMac: String,
+        /** MediaTek decoder low-latency mode (LibreHU-service, CarPlay page; on when the service does not say). */
+        val videoLowLatency: Boolean = true,
     ) {
         val rightHandDrive: Boolean get() = driverSide.equals("right", ignoreCase = true)
     }
@@ -43,6 +45,7 @@ object LibreHuVehicle {
     fun start(context: Context) {
         val app = context.applicationContext
         if (current == null) current = load(app)
+        apply(current)
         // Read now, before the session settings are built: done in the background, the first session after the
         // car was named (LibreHU Launcher's first setup, LibreHU-service) still went out as "xcertplay". A local
         // provider query, a few milliseconds; the background refresh stays for a slow start of the service.
@@ -78,6 +81,7 @@ object LibreHuVehicle {
                     driverSide = col("driver_side"),
                     bluetoothMac = col("bt_mac").takeIf { MAC.matches(it) }.orEmpty(),
                     wifiMac = col("wifi_mac").takeIf { MAC.matches(it) }.orEmpty(),
+                    videoLowLatency = col("carplay_video_low_latency") != "0",
                 )
             }
         } catch (error: Exception) {
@@ -86,6 +90,7 @@ object LibreHuVehicle {
             return
         }
         current = read
+        apply(read)
         save(context, read)
     }
 
@@ -99,7 +104,13 @@ object LibreHuVehicle {
             driverSide = p.getString("driver_side", "").orEmpty(),
             bluetoothMac = p.getString("bt_mac", "").orEmpty(),
             wifiMac = p.getString("wifi_mac", "").orEmpty(),
+            videoLowLatency = p.getBoolean("video_low_latency", true),
         )
+    }
+
+    /** What the description changes in the media pipeline. */
+    private fun apply(info: Info?) {
+        com.shilapi.xcertplay.media.AndroidMediaSink.vendorLowLatency = info?.videoLowLatency ?: true
     }
 
     private fun save(
@@ -117,6 +128,7 @@ object LibreHuVehicle {
                 .putString("driver_side", info.driverSide)
                 .putString("bt_mac", info.bluetoothMac)
                 .putString("wifi_mac", info.wifiMac)
+                .putBoolean("video_low_latency", info.videoLowLatency)
         }
         e.apply()
     }
