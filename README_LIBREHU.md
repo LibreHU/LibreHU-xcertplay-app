@@ -68,6 +68,9 @@ commentaire.
 | `common/build.gradle.kts` | `kotlinx-coroutines-android` (theme du launcher et nuit de LibreHU-service en `StateFlow`) |
 | `mobile/src/main/AndroidManifest.xml`, `automotive/src/main/AndroidManifest.xml` | icone thémable (`org.librehu.themed_icon`) |
 | `common/src/main/AndroidManifest.xml` | permission signature `org.librehu.carplay.permission.CONFIGURE` declaree ; `org.librehu.permission.VEHICLE` demandee ; visibilite des fournisseurs LibreHU (theme du launcher, fiche voiture) |
+| `mobile/src/main/AndroidManifest.xml`, `automotive/src/main/AndroidManifest.xml` | pas de sauvegarde adb (`allowBackup` false) ; `org.librehu.permission.VEHICLE` declaree aussi dans `mobile` (LibreHU-service ne prend `PHONE_INFO` que d'une appli qui l'a ; declaree ici, elle existe quel que soit l'ordre d'installation) |
+| `shared/src/main/AndroidManifest.xml` | `usesCleartextTraffic` garde, explique : seul le serveur MFi distant optionnel peut etre en `http://` (serveur du reseau local) ; CarPlay lui-meme passe par des sockets |
+| `automotive/build.gradle.kts`, `automotive/src/main/keepRules/librehu.keep` | R8 aussi pour le module automotive (non publie), memes regles que mobile |
 | `common/.../librehu/LibreHuVehicle.kt` (nouveau) | fiche voiture de LibreHU-service (nom, marque, modele, cote conducteur, vraies adresses Bluetooth / Wi-Fi), derniere fiche gardee et servie des le demarrage |
 | `common/.../librehu/LibreHuCarPlay.kt` (nouveau) | theme et accent du launcher, nuit de CarPlay commandee par LibreHU-service (phares), etat de la session diffuse, infos de l'iPhone envoyees a LibreHU-service seul (`org.librehu.carplay.PHONE_INFO`, paquet `org.librehu.service`) |
 | `common/.../CarPlayHostActivity.kt` | nom, marque et modele de la voiture dans la configuration AirPlay **et** dans l'identification iAP2 (nom affiche sur l'iPhone) ; adresses reelles ; mode nuit ; rapports de session ; demarrage de `LibreHuVehicle` / `LibreHuCarPlay` |

@@ -26,6 +26,8 @@
         android:name="android.hardware.usb.host"
         android:required="false" />
 
+    <!-- LibreHU: cleartext only matters for the optional remote MFi server, whose address the user may give as http://
+         (a server on the local network); CarPlay itself goes through sockets, which this does not cover. -->
     <application android:usesCleartextTraffic="true">
         <!-- Minimum Car API level -->
         <meta-data

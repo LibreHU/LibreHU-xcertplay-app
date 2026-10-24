@@ -1,0 +1,13 @@
+# LibreHU: R8 shrinks and optimises the code (Jetpack Compose is much faster that way, developer.android.com
+# "Compose performance"), without renaming it: logcat stack traces stay readable and JNI names stay valid.
+-dontobfuscate
+
+# Every native method, even one Java never calls.
+-keepclasseswithmembers,includedescriptorclasses class * {
+    native <methods>;
+}
+
+# Thrown from native code (shared/src/main/jni/linux_i2c_jni.c: FindClass + constructor (int, String)).
+-keep class com.shilapi.xcertplay.transport.LinuxI2cNativeException {
+    <init>(int, java.lang.String);
+}
