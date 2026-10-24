@@ -45,6 +45,51 @@ fun XcertplayTheme(
     // LibreHU fork: light / dark and accent of LibreHU Launcher when it is installed.
     val launcher by com.shilapi.xcertplay.librehu.LibreHuCarPlay.theme.collectAsState()
     launcher?.let { t ->
+        t.retro?.let { r ->
+            val c = r.map { androidx.compose.ui.graphics.Color(it) }
+            val scheme = if (t.dark) darkColorScheme() else lightColorScheme()
+            val seg = androidx.compose.ui.text.font.FontFamily(androidx.compose.ui.text.font.Font(com.shilapi.xcertplay.host.R.font.librehu_seg14))
+            MaterialTheme(
+                colorScheme =
+                    scheme.copy(
+                        background = c[0],
+                        surface = c[1],
+                        surfaceVariant = c[2],
+                        surfaceContainer = c[1],
+                        surfaceContainerHigh = c[2],
+                        primary = c[3],
+                        secondary = c[3],
+                        tertiary = c[3],
+                        onPrimary = c[4],
+                        onSecondary = c[4],
+                        onBackground = c[5],
+                        onSurface = c[5],
+                        onSurfaceVariant = c[6],
+                        outline = c[6],
+                    ),
+                // Segment display font of the launcher's retro styles (LibreHU Seg14, DSEG14, SIL OFL 1.1).
+                typography =
+                    Typography.copy(
+                        displayLarge = Typography.displayLarge.copy(fontFamily = seg),
+                        displayMedium = Typography.displayMedium.copy(fontFamily = seg),
+                        displaySmall = Typography.displaySmall.copy(fontFamily = seg),
+                        headlineLarge = Typography.headlineLarge.copy(fontFamily = seg),
+                        headlineMedium = Typography.headlineMedium.copy(fontFamily = seg),
+                        headlineSmall = Typography.headlineSmall.copy(fontFamily = seg),
+                        titleLarge = Typography.titleLarge.copy(fontFamily = seg),
+                        titleMedium = Typography.titleMedium.copy(fontFamily = seg),
+                        titleSmall = Typography.titleSmall.copy(fontFamily = seg),
+                        bodyLarge = Typography.bodyLarge.copy(fontFamily = seg),
+                        bodyMedium = Typography.bodyMedium.copy(fontFamily = seg),
+                        bodySmall = Typography.bodySmall.copy(fontFamily = seg),
+                        labelLarge = Typography.labelLarge.copy(fontFamily = seg),
+                        labelMedium = Typography.labelMedium.copy(fontFamily = seg),
+                        labelSmall = Typography.labelSmall.copy(fontFamily = seg),
+                    ),
+                content = content
+            )
+            return
+        }
         val accent = androidx.compose.ui.graphics.Color(t.accent)
         val onAccent = if (t.dark) androidx.compose.ui.graphics.Color(0xFF202124) else androidx.compose.ui.graphics.Color.White
         MaterialTheme(

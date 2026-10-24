@@ -39,11 +39,18 @@ object LibreHuCarPlay {
     const val ACTION_PHONE_INFO = "org.librehu.carplay.PHONE_INFO"
     private const val SERVICE_PACKAGE = "org.librehu.service"
 
-    /** Launcher theme: dark and accent (ARGB); null without LibreHU Launcher. */
+    /**
+     * Launcher theme: dark and accent (ARGB); null without LibreHU Launcher. [retro]: the launcher's retro palette
+     * (VFD amber, green LCD, cassette: background, surface, surface high, accent, on accent, text, text dim), null for
+     * its modern look; the screens then take those colours and the segment display font.
+     */
     data class LauncherTheme(
         val dark: Boolean,
         val accent: Int,
+        val retro: List<Int>? = null,
     )
+
+    private val RETRO_COLORS = listOf("background", "surface", "surface_high", "accent", "on_accent", "text", "text_dim")
 
     private val _theme = MutableStateFlow<LauncherTheme?>(null)
     val theme: StateFlow<LauncherTheme?> = _theme.asStateFlow()
@@ -84,7 +91,12 @@ object LibreHuCarPlay {
                         intent: Intent,
                     ) {
                         if (intent.hasExtra("dark") && intent.hasExtra("accent")) {
-                            _theme.value = LauncherTheme(intent.getBooleanExtra("dark", true), intent.getIntExtra("accent", 0))
+                            val retro =
+                                intent
+                                    .getStringExtra("style")
+                                    ?.takeIf { it.startsWith("retro") && RETRO_COLORS.all { k -> intent.hasExtra(k) } }
+                                    ?.let { RETRO_COLORS.map { k -> intent.getIntExtra(k, 0) } }
+                            _theme.value = LauncherTheme(intent.getBooleanExtra("dark", true), intent.getIntExtra("accent", 0), retro)
                         }
                     }
                 },
@@ -158,7 +170,11 @@ object LibreHuCarPlay {
                 if (!c.moveToFirst()) return
                 val dark = c.getColumnIndex("dark").takeIf { it >= 0 }?.let { c.getInt(it) != 0 } ?: true
                 val accent = c.getColumnIndex("accent").takeIf { it >= 0 }?.let { c.getInt(it) } ?: return
-                _theme.value = LauncherTheme(dark, accent)
+                val retro =
+                    c.getColumnIndex("style").takeIf { it >= 0 }?.let { c.getString(it) }?.takeIf { it.startsWith("retro") }?.let {
+                        RETRO_COLORS.map { k -> c.getColumnIndex(k).takeIf { i -> i >= 0 }?.let { i -> c.getInt(i) } ?: return@let null }
+                    }
+                _theme.value = LauncherTheme(dark, accent, retro)
             }
         } catch (e: Exception) {
             Log.w(TAG, "theme: ${e.message}")
