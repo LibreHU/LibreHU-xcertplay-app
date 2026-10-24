@@ -110,6 +110,13 @@ le logo n'est donc pas inclus dans ce depot public.
 git fetch upstream && git merge upstream/master
 ```
 
+## Appli téléphone (LibreHU Bridge)
+
+Réglable depuis le téléphone par l'appli LibreHU Bridge (Android et iPhone), à travers LibreHU-service : image (échelle, i/s, HEVC, taille d'écran, barres, conduite à droite), son, CarPlay sans fil et point d'accès, puce MFi, identité de la voiture, démarrage et journaux (pas les secrets : jeton MFi, mot de passe du point d'accès).
+Fournisseur `org.librehu.carplay.bridge` (`common/.../librehu/bridge/BridgeProvider.kt`), réservé aux applis signées avec la clé LibreHU (permission
+`org.librehu.permission.BRIDGE`, vérifiée dans `call()` lui-même) ; format décrit dans
+[LibreHU-service, docs/bridge.md](https://github.com/LibreHU/LibreHU-service/blob/main/docs/bridge.md).
+
 ## Optimisation (R8)
 
 L'APK publié par la CI (`assembleRelease`) est **optimisé par R8** : code et ressources réduits et optimisés, ce qui

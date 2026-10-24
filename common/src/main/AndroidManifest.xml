@@ -8,6 +8,10 @@
     <permission
         android:name="${applicationId}.permission.CONFIGURE"
         android:protectionLevel="signature" />
+    <!-- LibreHU apps (same signing key): LibreHU-service's bridge reads and changes CarPlay's settings for the phone app. -->
+    <permission
+        android:name="org.librehu.permission.BRIDGE"
+        android:protectionLevel="signature" />
     <!-- LibreHU: launcher theme provider (Android 11+ package visibility). -->
     <queries>
         <provider android:authorities="org.librehu.launcher.theme" />
@@ -57,6 +61,12 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <!-- Settings pages for LibreHU's phone app, read and changed by LibreHU-service's bridge (librehu/bridge). -->
+        <provider
+            android:name="com.shilapi.xcertplay.librehu.bridge.BridgeProvider"
+            android:authorities="${applicationId}.bridge"
+            android:exported="true"
+            android:permission="org.librehu.permission.BRIDGE" />
     </application>
 
 </manifest>
