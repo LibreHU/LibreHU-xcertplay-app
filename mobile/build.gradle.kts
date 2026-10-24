@@ -6,6 +6,17 @@ plugins {
 // LibreHU fork: LibreHU Apps updates when versionCode grows, and upstream's stays the same between two builds of the
 // fork. versionCode = upstream's + number of commits: grows with every commit, upstream bumps included. providers.exec,
 // not ProcessBuilder: the configuration cache is on.
+// "-<branch>" at the end of versionName: the branch the APK was built from (GITHUB_REF_NAME in the CI).
+val librehuBranch: String =
+    System.getenv("GITHUB_REF_NAME")?.takeIf { it.isNotBlank() } ?: providers
+        .exec {
+            commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+            isIgnoreExitValue = true
+        }.standardOutput.asText
+        .get()
+        .trim()
+        .ifEmpty { "local" }
+
 val librehuCommitCount: Int =
     providers
         .exec {
@@ -28,7 +39,7 @@ android {
         minSdk = 28
         targetSdk = 37
         versionCode = 1400 + librehuCommitCount
-        versionName = "1.4.0"
+        versionName = "1.4.0-$librehuBranch"
         testInstrumentationRunner = "com.shilapi.xcertplay.CarPlayMediaServiceLifecycleTest"
     }
 
