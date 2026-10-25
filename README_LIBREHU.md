@@ -3,6 +3,14 @@
 Fork de [xcertplay](https://github.com/shilapi/xcertplay) (recepteur CarPlay en appli Android, filaire et sans fil),
 pour les autoradios LibreHU (AC8257 / UJC201). Licence inchangee : **GPL-3.0** (`LICENSE`).
 
+## Captures d'écran
+
+| | |
+|---|---|
+| ![Écran principal](docs/screenshots/main.png)<br>Écran principal |   |
+
+Captures sur l'émulateur Android 9 (1280×720, 160 dpi comme l'autoradio), sans autoradio branché : les valeurs du véhicule et de la MCU sont vides. Refaites-les avec l'action **Screenshots** de [LibreHU-OTA-app](https://github.com/LibreHU/LibreHU-OTA-app/tree/main/screenshots). Galerie : [librehu.github.io/screenshots/carplay.html](https://librehu.github.io/screenshots/carplay.html).
+
 ## Filaire ou sans fil
 xcertplay fait les deux, **un seul a la fois** : interrupteur « Wireless CarPlay » de ses reglages (ouverts par le
 bouton en bas a droite ou en glissant trois doigts vers le bas), puis « Save & Reconnect ».
