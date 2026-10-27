@@ -56,8 +56,9 @@ class BridgeProvider : BridgeKitProvider() {
                 slider("buffer", s(R.string.bridge_cp_buffer), p.loadMainMediaAudioBufferDurationMs(c), MainMediaAudioBuffer.MIN_DURATION_MS, MainMediaAudioBuffer.MAX_DURATION_MS, 50, "ms") {
                     p.saveMainMediaAudioBufferDurationMs(c, it)
                 }
-                slider("mic", s(R.string.bridge_cp_mic), p.loadMicrophoneGainPercent(c), MicrophoneGain.MIN_PERCENT, MicrophoneGain.MAX_PERCENT, MicrophoneGain.STEP_PERCENT, "%") {
-                    p.saveMicrophoneGainPercent(c, it)
+                // In dB like CarPlay's own slider since 1.4.2 (1 dB steps, -6 to +20 dB).
+                slider("mic", s(R.string.bridge_cp_mic), MicrophoneGain.MIN_DB + MicrophoneGain.stepForPercent(p.loadMicrophoneGainPercent(c)), MicrophoneGain.MIN_DB, MicrophoneGain.MAX_DB, MicrophoneGain.STEP_DB, "dB") {
+                    p.saveMicrophoneGainPercent(c, MicrophoneGain.percentForStep((it - MicrophoneGain.MIN_DB) / MicrophoneGain.STEP_DB))
                 }
                 switch("channels", s(R.string.bridge_cp_channels), p.loadAdvancedAudioChannelMapping(c)) { p.saveAdvancedAudioChannelMapping(c, it) }
             },

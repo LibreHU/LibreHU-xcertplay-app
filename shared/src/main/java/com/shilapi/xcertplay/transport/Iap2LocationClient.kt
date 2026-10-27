@@ -16,6 +16,12 @@ data class CarPlayLocationFix(
     val speedMetersPerSecond: Double? = null,
     val accuracyMeters: Double? = null,
     val timestampMillis: Long? = null,
+    /** GGA fix quality; null keeps the legacy GPS-fix value. */
+    val fixQuality: Int? = null,
+    /** Satellites used in the fix; null keeps the legacy placeholder. */
+    val satellitesUsed: Int? = null,
+    /** Set only when [altitudeMeters] is above mean sea level: ellipsoid height minus MSL. */
+    val geoidSeparationMeters: Double? = null,
 ) {
     init {
         require(latitudeDegrees.isFinite() && latitudeDegrees in -90.0..90.0) {
@@ -31,6 +37,11 @@ data class CarPlayLocationFix(
 interface Iap2LocationProvider : AutoCloseable {
     /** Starts location updates and returns whether at least one source was subscribed. */
     fun start(): Boolean
+
+    /** Acquire a source without granting a phone subscription. */
+    fun prewarm(): Boolean = start()
+    fun onRequested(components: Set<Int>) = Unit
+    fun supportedComponents(): Set<Int> = setOf(1, 2)
 
     fun stop()
 
@@ -48,7 +59,13 @@ object NmeaLocationEncoder {
             ?.takeIf { it > 0 }
             ?.let(::ofEpochMilli)
             ?: ofEpochMilli(System.currentTimeMillis())
-        val time = format("%02d%02d%02d.00", timestamp.hour, timestamp.minute, timestamp.second)
+        val time = format(
+            "%02d%02d%02d.%02d",
+            timestamp.hour,
+            timestamp.minute,
+            timestamp.second,
+            timestamp.centisecond,
+        )
         val date = format(
             "%02d%02d%02d",
             timestamp.day,
@@ -61,23 +78,26 @@ object NmeaLocationEncoder {
         val hdop = fix.accuracyMeters
             ?.takeIf { it.isFinite() && it > 0 }
             ?.let { min(50.0, max(0.5, it / 5.0)) }
-            ?: 1.0
+            ?: null
         val altitude = fix.altitudeMeters
             ?.takeIf { it.isFinite() }
             ?.let { format("%.1f", it) }
-            ?: "0.0"
+            ?: ""
 
+        val quality = fix.fixQuality ?: LEGACY_FIX_QUALITY
+        val satellites = fix.satellitesUsed?.let { format("%02d", it) } ?: LEGACY_SATELLITES
+        val separation = fix.geoidSeparationMeters?.takeIf { it.isFinite() }?.let { format("%.1f", it) } ?: "0.0"
         val ggaBody = "GPGGA,$time,${latitude.value},${latitude.hemisphere}," +
-            "${longitude.value},${longitude.hemisphere},1,08,${format("%.1f", hdop)}," +
-            "$altitude,M,0.0,M,,"
+            "${longitude.value},${longitude.hemisphere},$quality,$satellites," +
+            "${hdop?.let { format("%.1f", it) }.orEmpty()},$altitude,M,$separation,M,,"
         val speedKnots = fix.speedMetersPerSecond
             ?.takeIf { it.isFinite() && it >= 0 }
             ?.let { format("%.2f", it * KNOTS_PER_METER_PER_SECOND) }
-            ?: "0.00"
+            ?: ""
         val course = fix.bearingDegrees
             ?.takeIf { it.isFinite() }
             ?.let { format("%.2f", it) }
-            ?: "0.00"
+            ?: ""
         val rmcBody = "GPRMC,$time,A,${latitude.value},${latitude.hemisphere}," +
             "${longitude.value},${longitude.hemisphere},$speedKnots,$course,$date,,"
 
@@ -121,11 +141,15 @@ object NmeaLocationEncoder {
         val hour: Int = fields.hour
         val minute: Int = fields.minute
         val second: Int = fields.second
+        val centisecond: Int = fields.nano / 10_000_000
         val day: Int = fields.dayOfMonth
         val month: Int = fields.monthValue
         val year: Int = fields.year
     }
 
+    /** Sent unless precise positioning supplies the real value. */
+    private const val LEGACY_FIX_QUALITY = 1
+    private const val LEGACY_SATELLITES = "08"
     private const val KNOTS_PER_METER_PER_SECOND = 1.94384449
     private const val MINUTES_PER_DEGREE = 60.0
     private const val MINUTE_ROUNDING_TOLERANCE = 0.00005

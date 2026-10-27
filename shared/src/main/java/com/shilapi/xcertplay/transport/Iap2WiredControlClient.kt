@@ -27,6 +27,7 @@ class Iap2WiredControlClient(
         availableCurrentMilliAmps: Int,
         bringUpTimeoutMillis: Long = DEFAULT_TIMEOUT_MILLIS,
         locationProvider: Iap2LocationProvider? = null,
+        vehicleStatusProvider: VehicleStatusProvider? = null,
         onReady: () -> Unit = {},
         onStopped: () -> Unit = {},
         onIncoming: (Iap2Frame) -> Unit = {},
@@ -39,9 +40,18 @@ class Iap2WiredControlClient(
             "bringUpTimeoutMillis must be in 1..$MAX_TIMEOUT_MILLIS"
         }
 
+        val vehicleReporter = Iap2VehicleStatusReporter(vehicleStatusProvider,
+            Iap2VehicleStatus.capabilities(vehicleStatusProvider?.awaitSnapshot(2_000)))
+        val locationComponents = locationProvider?.supportedComponents().orEmpty()
+        val controlIdentification = identification.copy(
+            vehicleStatusCapabilities = vehicleReporter.advertised,
+            locationInformationEnabled = locationComponents.isNotEmpty(),
+            gpsLocationEnabled = locationComponents.any { it == 1 || it == 2 },
+            vehicleSpeedEnabled = 4 in locationComponents,
+        )
         val bringUpDeadlineNanos = deadlineAfter(bringUpTimeoutMillis)
         Iap2IdentificationClient(session).identify(
-            identification,
+            controlIdentification,
             requireRemaining(bringUpDeadlineNanos),
         )
         onProgress("iap2 identification accepted")
@@ -59,6 +69,7 @@ class Iap2WiredControlClient(
 
         var forwardedFrames = 0
         var carPlayStartSessions = 0
+        val locationSubscription = Iap2LocationSubscription()
         var locationActive = false
         var locationSentLogged = false
         var hidStarted = false
@@ -75,16 +86,20 @@ class Iap2WiredControlClient(
             onReady()
             // The control session is long-lived. Poll timeouts only wake this loop; they do not end it.
             while (true) {
-                if (locationActive && sendLatestLocation(locationProvider) && !locationSentLogged) {
+                vehicleReporter.tick(::sendDuringControl)
+                if (locationActive && sendLatestLocation(locationProvider, locationSubscription) && !locationSentLogged) {
                     locationSentLogged = true
                     onProgress("iap2 tx=0xfffb location-information")
                 }
                 val pollTimeout = if (locationActive) {
-                    LOCATION_POLL_INTERVAL_MILLIS
+                    // Wake when the next sentence is due instead of a fixed second, so the phone's
+                    // interval is met without the drift of an early wake followed by a full wait.
+                    (locationSubscription.millisUntilDue() ?: LOCATION_POLL_INTERVAL_MILLIS)
+                        .coerceIn(LOCATION_MIN_POLL_MILLIS, LOCATION_POLL_INTERVAL_MILLIS)
                 } else {
                     CONTROL_POLL_INTERVAL_MILLIS
                 }
-                val incoming = session.recv(pollTimeout)
+                val incoming = session.recv(vehicleReporter.pollTimeout(pollTimeout))
                 if (incoming == null) {
                     if (session.isClosed) {
                         return Iap2WiredControlResult(
@@ -97,6 +112,7 @@ class Iap2WiredControlClient(
                     continue
                 }
 
+                if (vehicleReporter.handle(incoming, ::sendDuringControl)) continue
                 when (incoming.messageId) {
                     CARPLAY_AVAILABILITY -> {
                         onProgress("iap2 rx=0x4300 carplay-availability")
@@ -111,9 +127,12 @@ class Iap2WiredControlClient(
 
                     Iap2LocationMessages.START_LOCATION_INFORMATION -> {
                         onProgress("iap2 rx=0xfffa start-location-information")
-                        locationActive = startLocationUpdates(locationProvider, onProgress)
+                        locationActive = if (locationSubscription.request(incoming, locationComponents)) {
+                            locationProvider?.onRequested(locationSubscription.components.intersect(locationComponents))
+                            startLocationUpdates(locationProvider, onProgress)
+                        } else { locationProvider?.stop(); false }
                         locationSentLogged = false
-                        if (locationActive && sendLatestLocation(locationProvider)) {
+                        if (locationActive && sendLatestLocation(locationProvider, locationSubscription)) {
                             locationSentLogged = true
                             onProgress("iap2 tx=0xfffb location-information")
                         }
@@ -124,6 +143,7 @@ class Iap2WiredControlClient(
                         locationActive = false
                         locationSentLogged = false
                         locationProvider?.stop()
+                        locationSubscription.stop()
                     }
 
                     else -> {
@@ -134,6 +154,7 @@ class Iap2WiredControlClient(
                 }
             }
         } finally {
+            vehicleReporter.stop()
             locationProvider?.stop()
             if (hidStarted && !session.isClosed) {
                 runCatching {
@@ -154,8 +175,9 @@ class Iap2WiredControlClient(
 
     private fun sendLatestLocation(
         provider: Iap2LocationProvider?,
+        subscription: Iap2LocationSubscription,
     ): Boolean {
-        val sentence = provider?.latestNmea() ?: return false
+        val sentence = provider?.latestNmea()?.let(subscription::filter) ?: return false
         session.send(
             Iap2LocationMessages.locationInformation(sentence),
             CONTROL_SEND_TIMEOUT_MILLIS,
@@ -182,6 +204,7 @@ class Iap2WiredControlClient(
         private const val CARPLAY_AVAILABILITY = 0x4300
         private const val CARPLAY_START_SESSION = 0x4301
         private const val LOCATION_POLL_INTERVAL_MILLIS = 1_000L
+        private const val LOCATION_MIN_POLL_MILLIS = 50L
         private const val CONTROL_POLL_INTERVAL_MILLIS = 60_000L
         private const val CONTROL_SEND_TIMEOUT_MILLIS = 5_000L
         private const val HID_STOP_TIMEOUT_MILLIS = 1_000L

@@ -145,6 +145,11 @@ class AirPlaySession(
         }
     }
 
+    fun acceptsViewAreas(): Boolean = !closed.get() && displayControl.acceptsViewAreas()
+
+    /** Sends updateViewArea through POST /command, serialized by the [sendCommand] write lock. */
+    fun showViewArea(index: Int): Boolean = displayControl.showViewArea(index)
+
     fun sendTouch(contacts: List<AirPlayContact>): Boolean {
         val scaled = contacts.map {
             it.copy(x = it.x * config.main.widthPixels, y = it.y * config.main.heightPixels)
@@ -749,8 +754,7 @@ internal fun safeClose(closeable: Closeable?) {
     }
 }
 
-private fun ByteArray.toHex(): String =
-    joinToString(separator = "") { byte -> "%02x".format(byte.toInt() and 0xff) }
+private fun ByteArray.toHex(): String = toHexString()
 
 private fun asMap(value: Any?): Map<String, Any?>? {
     val map = value as? Map<*, *> ?: return null

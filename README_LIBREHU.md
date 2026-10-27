@@ -55,7 +55,7 @@ bouton en bas a droite ou en glissant trois doigts vers le bas), puis « Save & 
   launcher, sinon celui d'Android.
 - **Etat de la session** diffuse pour LibreHU-service (`org.librehu.carplay.SESSION_STATE`, `state` = connecting /
   active / ended / failed, `detail`) : onglet Projection → CarPlay du service.
-- **Numero de version** : `versionCode` = celui d'amont (1400) + nombre de commits du depot. LibreHU Apps propose une
+- **Numero de version** : `versionCode` = celui d'amont (1402 depuis 1.4.2) + nombre de commits du depot. LibreHU Apps propose une
   mise a jour quand le `versionCode` augmente ; celui d'amont ne bougeait pas d'un build du fork a l'autre, la mise a
   jour n'apparaissait donc pas. Le `versionName` reste celui d'amont suivi de `-<branche>` ; le commit est sur sa propre ligne de `release.txt`.
 - **CI** (`.github/workflows/librehu.yml`) : APK `mobile` en release, pre-release continue `latest-<branche>` avec
@@ -66,13 +66,13 @@ CI publie l'APK.
 
 ## Fichiers modifies par rapport a l'amont
 
-Base : commit amont `551895a` (xcertplay « 1.4.0 », 11/10/2026), branche locale `librehu` publiee sur `master`.
-`git diff 551895a HEAD --stat` donne la liste complete ; les modifications du code sont marquees `LibreHU` en
+Base : commit amont `1298fb3` (xcertplay « 1.4.2 », 18/10/2026, fusionne le 27/10/2026 ; base precedente `551895a`, « 1.4.0 »),
+branche locale `librehu` publiee sur `master`. `git diff 1298fb3 HEAD --stat` donne la liste complete ; les modifications du code sont marquees `LibreHU` en
 commentaire.
 
 | Fichier(s) | Modification |
 |---|---|
-| `mobile/build.gradle.kts`, `automotive/build.gradle.kts` | paquet `org.librehu.carplay`, signature par la cle LibreHU, `versionCode` = 1400 + nombre de commits (`providers.exec`, compatible cache de configuration) |
+| `mobile/build.gradle.kts`, `automotive/build.gradle.kts` | paquet `org.librehu.carplay`, signature par la cle LibreHU, `versionCode` = 1402 + nombre de commits (`providers.exec`, compatible cache de configuration) |
 | `common/build.gradle.kts` | `kotlinx-coroutines-android` (theme du launcher et nuit de LibreHU-service en `StateFlow`) |
 | `mobile/src/main/AndroidManifest.xml`, `automotive/src/main/AndroidManifest.xml` | icone thémable (`org.librehu.themed_icon`) |
 | `common/src/main/AndroidManifest.xml` | permission signature `org.librehu.carplay.permission.CONFIGURE` declaree ; `org.librehu.permission.VEHICLE` demandee ; visibilite des fournisseurs LibreHU (theme du launcher, fiche voiture) |
@@ -85,7 +85,7 @@ commentaire.
 | `shared/.../transport/LockdownDeviceInfoClient.kt` (nouveau) | infos de l'iPhone par la session Lockdown deja appairee pour CarPlay filaire, comme libimobiledevice / pymobiledevice3 : `GetValue` (nom, modele `ProductType`, iOS, adresse Bluetooth), domaine `com.apple.mobile.battery` (niveau, charge, alimentation), service `com.apple.mobile.diagnostics_relay` requete `IORegistry` classe `IOPMPowerSource` (cycles, temperature, capacites, tension, courant) ; relu toutes les 60 s |
 | `shared/.../transport/LockdownPlistChannel.kt` | plist : `<array>`, `<real>`, `<date>` lus (et ecrits), necessaires aux reponses de diagnostic |
 | `shared/.../librehu/IphoneInfoBus.kt` (nouveau), `shared/.../orchestration/CarPlayController.kt` | iAP2 `DeviceInformationUpdate` (0x4E09, nom), `PowerUpdate` (0xAE01 : chargeur externe, etat de charge, niveau), `DeviceTransportIdentifier` (0x4E0E, adresse Bluetooth) fusionnes avec les infos Lockdown ; nom et modele de l'iPhone par AirPlay (filaire et sans fil) ; en sans fil, nom et adresse de l'iPhone connecte en Bluetooth ; `wired` (USB ou sans fil) pour LibreHU-service ; effaces a la fin de la session. Ni l'identification iAP2 ni les messages envoyes ne changent : seuls des messages deja recus sont lus |
-| `common/.../ui/theme/Theme.kt` | ecrans Compose au clair / sombre et a l'accent du launcher |
+| `common/.../ui/theme/Theme.kt` | theme Lavender d'amont (1.4.2) repris au clair / sombre, a l'accent (ou a la palette retro) et a la police segments du launcher |
 | `common/.../AirPlayPersistence.kt` | cible MFi par defaut = I2C, peripherique I2C par defaut = `auto` |
 | `common/.../MainActivity.kt` | auto-test MFi sur le bus trouve automatiquement |
 | `shared/.../orchestration/MfiRuntime.kt`, `CarPlayController.kt` | `auto` : chaque `/dev/i2c-N` accessible est sonde aux adresses 0x10 / 0x11 pour trouver la puce MFi |
@@ -117,6 +117,10 @@ le logo n'est donc pas inclus dans ce depot public.
 ```
 git fetch upstream && git merge upstream/master
 ```
+Derniere fusion : 1.4.2 (27/10/2026, 31 commits : nouvelle interface Lavender, traductions, micro en dB, qualite audio
+mesuree, diagnostics vehicule). Conflits resolus en gardant les ajouts LibreHU : fiche voiture et nuit de LibreHU-service
+au demarrage de `CarPlayHostActivity`, `vdec-lowlatency` MediaTek dans `AndroidMediaSink`, theme du launcher par-dessus
+Lavender. Le reglage du micro de LibreHU Bridge passe en dB (1 dB par cran, -6 a +20 dB) comme celui de CarPlay.
 
 ## Appli téléphone (LibreHU Bridge)
 

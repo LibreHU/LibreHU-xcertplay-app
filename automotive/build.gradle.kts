@@ -38,8 +38,8 @@ android {
         applicationId = "org.librehu.carplay"
         minSdk = 28
         targetSdk = 37
-        versionCode = 1400 + librehuCommitCount
-        versionName = "1.4.0-$librehuBranch"
+        versionCode = 1402 + librehuCommitCount
+        versionName = "1.4.2-$librehuBranch"
 
     }
 
