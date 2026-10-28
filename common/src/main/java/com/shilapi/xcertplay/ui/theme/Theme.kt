@@ -29,6 +29,10 @@ object Space {
     val measure = 600.dp
 }
 
+/** LibreHU fork: square corners for the launcher's factory and ambient styles. */
+private val SquareShapes =
+    RoundedCornerShape(0).let { Shapes(extraSmall = it, small = it, medium = it, large = it, extraLarge = it) }
+
 /** MD3 shape scale: the larger, the more important or interactive. */
 object Radius {
     val xs = 4.dp
@@ -82,10 +86,18 @@ fun XcertplayTheme(
     val launcher by com.shilapi.xcertplay.librehu.LibreHuCarPlay.theme.collectAsState()
     val dark = launcher?.dark ?: darkTheme
     val colors = launcher?.let { librehuScheme(it) } ?: if (dark) LavenderDark else LavenderLight
-    val typography = if (launcher?.segment == true) segmentTypography() else Typography
+    val typography =
+        when {
+            launcher?.segment == true -> segmentTypography()
+            launcher?.factory == true -> factoryTypography()
+            launcher?.ambient == true -> mapStyles(Typography) { it.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Light) }
+            else -> Typography
+        }
+    // LibreHU fork: square corners in the launcher's factory and ambient styles, like the original systems.
+    val shapes = if (launcher?.factory == true || launcher?.ambient == true) SquareShapes else LavenderShapes
     val extended = if (dark) LavenderExtendedDark else LavenderExtendedLight
     CompositionLocalProvider(LocalExtendedColors provides extended) {
-        MaterialTheme(colorScheme = colors, typography = typography, shapes = LavenderShapes) {
+        MaterialTheme(colorScheme = colors, typography = typography, shapes = shapes) {
             if (scaled) ProvideScaledDensity(content) else content()
         }
     }
@@ -144,4 +156,38 @@ private fun segmentTypography(): androidx.compose.material3.Typography {
         labelMedium = Typography.labelMedium.copy(fontFamily = seg),
         labelSmall = Typography.labelSmall.copy(fontFamily = seg),
     )
+}
+
+/** LibreHU fork: every text style of [t] through [f]. */
+private fun mapStyles(
+    t: androidx.compose.material3.Typography,
+    f: (androidx.compose.ui.text.TextStyle) -> androidx.compose.ui.text.TextStyle,
+) = t.copy(
+    displayLarge = f(t.displayLarge),
+    displayMedium = f(t.displayMedium),
+    displaySmall = f(t.displaySmall),
+    headlineLarge = f(t.headlineLarge),
+    headlineMedium = f(t.headlineMedium),
+    headlineSmall = f(t.headlineSmall),
+    titleLarge = f(t.titleLarge),
+    titleMedium = f(t.titleMedium),
+    titleSmall = f(t.titleSmall),
+    bodyLarge = f(t.bodyLarge),
+    bodyMedium = f(t.bodyMedium),
+    bodySmall = f(t.bodySmall),
+    labelLarge = f(t.labelLarge),
+    labelMedium = f(t.labelMedium),
+    labelSmall = f(t.labelSmall),
+)
+
+/** LibreHU fork: Source Sans 3 (SIL OFL 1.1) for the launcher's factory style. */
+private fun factoryTypography(): androidx.compose.material3.Typography {
+    val bold = androidx.compose.ui.text.font.Font(com.shilapi.xcertplay.host.R.font.source_sans3_semibold, androidx.compose.ui.text.font.FontWeight.Bold)
+    val f =
+        androidx.compose.ui.text.font.FontFamily(
+            androidx.compose.ui.text.font.Font(com.shilapi.xcertplay.host.R.font.source_sans3_regular),
+            androidx.compose.ui.text.font.Font(com.shilapi.xcertplay.host.R.font.source_sans3_semibold, androidx.compose.ui.text.font.FontWeight.SemiBold),
+            bold,
+        )
+    return mapStyles(Typography) { it.copy(fontFamily = f) }
 }

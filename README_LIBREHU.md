@@ -53,6 +53,10 @@ bouton en bas a droite ou en glissant trois doigts vers le bas), puis « Save & 
   l'ordre : LibreHU-service (phares, `org.librehu.carplay.action.SET_NIGHT_MODE`, accepte seulement des applis
   signees LibreHU : permission signature `org.librehu.carplay.permission.CONFIGURE`), sinon le mode sombre du
   launcher, sinon celui d'Android.
+- **Styles du launcher** : LibreHU Launcher demande aussi son style a l'appli (colonne / extra `style`), comme les
+  couleurs et le mode retro. Style **« Modularer Infotainment-Baukasten »** (`factory`) : palette du launcher, coins
+  carres et police Source Sans 3 (Adobe, SIL OFL 1.1, `third_party/SourceSans3-LICENSE.md`) ; style **« LHU-Link »**
+  (`ambient`) : palette du launcher, coins carres et texte fin (`ui/theme/Theme.kt`).
 - **Etat de la session** diffuse pour LibreHU-service (`org.librehu.carplay.SESSION_STATE`, `state` = connecting /
   active / ended / failed, `detail`) : onglet Projection → CarPlay du service.
 - **Numero de version** : `versionCode` = celui d'amont (1402 depuis 1.4.2) + nombre de commits du depot. LibreHU Apps propose une

@@ -50,7 +50,19 @@ object LibreHuCarPlay {
         val retro: List<Int>? = null,
         /** The segment display font chosen in the launcher (any style). */
         val segment: Boolean = false,
-    )
+        /**
+         * The launcher's style: modern, retro…, factory (Modularer Infotainment-Baukasten: black, Source Sans 3,
+         * square) or ambient (LHU-Link: black to night blue lit by the accent, light text, square). The launcher
+         * asks the apps for it, like the colours; [retro] then holds its palette.
+         */
+        val style: String = "modern",
+    ) {
+        val factory: Boolean get() = style == "factory"
+        val ambient: Boolean get() = style == "ambient"
+    }
+
+    /** Styles whose palette the screens take from the launcher. */
+    private fun styled(s: String?) = s != null && (s.startsWith("retro") || s == "factory" || s == "ambient")
 
     private val RETRO_COLORS = listOf("background", "surface", "surface_high", "accent", "on_accent", "text", "text_dim")
 
@@ -93,13 +105,14 @@ object LibreHuCarPlay {
                         intent: Intent,
                     ) {
                         if (intent.hasExtra("dark") && intent.hasExtra("accent")) {
+                            val style = intent.getStringExtra("style")
                             val retro =
-                                intent
-                                    .getStringExtra("style")
-                                    ?.takeIf { it.startsWith("retro") && RETRO_COLORS.all { k -> intent.hasExtra(k) } }
+                                style
+                                    ?.takeIf { styled(it) && RETRO_COLORS.all { k -> intent.hasExtra(k) } }
                                     ?.let { RETRO_COLORS.map { k -> intent.getIntExtra(k, 0) } }
-                            val segment = intent.getStringExtra("font")?.let { it == "segment" } ?: (retro != null)
-                            _theme.value = LauncherTheme(intent.getBooleanExtra("dark", true), intent.getIntExtra("accent", 0), retro, segment)
+                            val segment = intent.getStringExtra("font")?.let { it == "segment" } ?: (style?.startsWith("retro") == true)
+                            _theme.value =
+                                LauncherTheme(intent.getBooleanExtra("dark", true), intent.getIntExtra("accent", 0), retro, segment, style ?: "modern")
                         }
                     }
                 },
@@ -173,12 +186,13 @@ object LibreHuCarPlay {
                 if (!c.moveToFirst()) return
                 val dark = c.getColumnIndex("dark").takeIf { it >= 0 }?.let { c.getInt(it) != 0 } ?: true
                 val accent = c.getColumnIndex("accent").takeIf { it >= 0 }?.let { c.getInt(it) } ?: return
+                val style = c.getColumnIndex("style").takeIf { it >= 0 }?.let { c.getString(it) }
                 val retro =
-                    c.getColumnIndex("style").takeIf { it >= 0 }?.let { c.getString(it) }?.takeIf { it.startsWith("retro") }?.let {
+                    style?.takeIf { styled(it) }?.let {
                         RETRO_COLORS.map { k -> c.getColumnIndex(k).takeIf { i -> i >= 0 }?.let { i -> c.getInt(i) } ?: return@let null }
                     }
-                val segment = c.getColumnIndex("font").takeIf { it >= 0 }?.let { c.getString(it) == "segment" } ?: (retro != null)
-                _theme.value = LauncherTheme(dark, accent, retro, segment)
+                val segment = c.getColumnIndex("font").takeIf { it >= 0 }?.let { c.getString(it) == "segment" } ?: (style?.startsWith("retro") == true)
+                _theme.value = LauncherTheme(dark, accent, retro, segment, style ?: "modern")
             }
         } catch (e: Exception) {
             Log.w(TAG, "theme: ${e.message}")
