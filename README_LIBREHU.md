@@ -161,3 +161,7 @@ but non lucratif, dons récurrents) :
 [![Donateurs sur Liberapay](https://img.shields.io/liberapay/patrons/DokT.svg?logo=liberapay)](https://liberapay.com/DokT/)
 
 Ces dons vont au projet LibreHU, pas aux auteurs de xcertplay : pour les soutenir, voir leur dépôt.
+
+## Contact
+
+[librehu@proton.me](mailto:librehu@proton.me)
