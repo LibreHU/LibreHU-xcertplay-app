@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chinese (Simplified) translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · 画面</string>
+    <string name="bridge_cp_scale">画面缩放</string>
+    <string name="bridge_cp_fps">帧率</string>
+    <string name="bridge_cp_hevc_sw">HEVC 软件解码器</string>
+    <string name="bridge_cp_width">屏幕宽度</string>
+    <string name="bridge_cp_size_basis">屏幕尺寸依据</string>
+    <string name="bridge_cp_width_basis">宽度</string>
+    <string name="bridge_cp_height_basis">高度</string>
+    <string name="bridge_cp_rhd">右舵</string>
+    <string name="bridge_cp_hide_top">隐藏顶部栏</string>
+    <string name="bridge_cp_hide_bottom">隐藏底部栏</string>
+    <string name="bridge_cp_safe_outside">在安全区域外绘制</string>
+    <string name="bridge_cp_gestures">更多手势进入设置</string>
+    <string name="bridge_cp_sound">CarPlay · 声音</string>
+    <string name="bridge_cp_buffer">媒体音频缓冲</string>
+    <string name="bridge_cp_mic">麦克风增益</string>
+    <string name="bridge_cp_channels">高级音频声道映射</string>
+    <string name="bridge_cp_wireless">无线 CarPlay</string>
+    <string name="bridge_cp_hotspot">热点</string>
+    <string name="bridge_cp_hotspot_local">本地热点</string>
+    <string name="bridge_cp_hotspot_manual">手动热点</string>
+    <string name="bridge_cp_band">频段</string>
+    <string name="bridge_cp_auto">自动</string>
+    <string name="bridge_cp_channel">信道</string>
+    <string name="bridge_cp_channel_hint">0：自动</string>
+    <string name="bridge_cp_security">安全性</string>
+    <string name="bridge_cp_open">开放</string>
+    <string name="bridge_cp_system">CarPlay · 系统</string>
+    <string name="bridge_cp_mfi">认证芯片（MFi）</string>
+    <string name="bridge_cp_mfi_remote">远程服务器</string>
+    <string name="bridge_cp_mfi_files">本地文件</string>
+    <string name="bridge_cp_mfi_server">MFi 服务器</string>
+    <string name="bridge_cp_identity">车辆信息</string>
+    <string name="bridge_cp_manufacturer">制造商</string>
+    <string name="bridge_cp_model">型号</string>
+    <string name="bridge_cp_oem">OEM 标签</string>
+    <string name="bridge_cp_start">启动</string>
+    <string name="bridge_cp_boot">随车机启动</string>
+    <string name="bridge_cp_location">将位置发送到 iPhone</string>
+    <string name="bridge_cp_logs">日志</string>
+    <string name="bridge_cp_debug_logs">调试日志</string>
+    <string name="bridge_cp_frame_logs">视频帧日志</string>
+    <string name="bridge_cp_metrics">屏幕显示媒体指标</string>
+    <string name="bridge_cp_audio_capture">音频数据包捕获</string>
+</resources>

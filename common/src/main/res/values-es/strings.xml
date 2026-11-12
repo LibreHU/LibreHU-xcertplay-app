@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Spanish translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · Imagen</string>
+    <string name="bridge_cp_scale">Escala de la imagen</string>
+    <string name="bridge_cp_fps">Imágenes por segundo</string>
+    <string name="bridge_cp_hevc_sw">Decodificador HEVC por software</string>
+    <string name="bridge_cp_width">Ancho de la pantalla</string>
+    <string name="bridge_cp_size_basis">Tamaño de la pantalla según</string>
+    <string name="bridge_cp_width_basis">su ancho</string>
+    <string name="bridge_cp_height_basis">su alto</string>
+    <string name="bridge_cp_rhd">Volante a la derecha</string>
+    <string name="bridge_cp_hide_top">Ocultar la barra superior</string>
+    <string name="bridge_cp_hide_bottom">Ocultar la barra inferior</string>
+    <string name="bridge_cp_safe_outside">Dibujar fuera de la zona segura</string>
+    <string name="bridge_cp_gestures">Más gestos hacia los ajustes</string>
+    <string name="bridge_cp_sound">CarPlay · Sonido</string>
+    <string name="bridge_cp_buffer">Búfer de audio multimedia</string>
+    <string name="bridge_cp_mic">Ganancia del micrófono</string>
+    <string name="bridge_cp_channels">Asignación avanzada de canales de audio</string>
+    <string name="bridge_cp_wireless">CarPlay inalámbrico</string>
+    <string name="bridge_cp_hotspot">Punto de acceso</string>
+    <string name="bridge_cp_hotspot_local">Punto de acceso local</string>
+    <string name="bridge_cp_hotspot_manual">Punto de acceso manual</string>
+    <string name="bridge_cp_band">Banda</string>
+    <string name="bridge_cp_auto">Automático</string>
+    <string name="bridge_cp_channel">Canal</string>
+    <string name="bridge_cp_channel_hint">0: automático</string>
+    <string name="bridge_cp_security">Seguridad</string>
+    <string name="bridge_cp_open">Abierta</string>
+    <string name="bridge_cp_system">CarPlay · Sistema</string>
+    <string name="bridge_cp_mfi">Chip de autenticación (MFi)</string>
+    <string name="bridge_cp_mfi_remote">Servidor remoto</string>
+    <string name="bridge_cp_mfi_files">Archivos locales</string>
+    <string name="bridge_cp_mfi_server">Servidor MFi</string>
+    <string name="bridge_cp_identity">Identidad del coche</string>
+    <string name="bridge_cp_manufacturer">Fabricante</string>
+    <string name="bridge_cp_model">Modelo</string>
+    <string name="bridge_cp_oem">Etiqueta OEM</string>
+    <string name="bridge_cp_start">Inicio</string>
+    <string name="bridge_cp_boot">Iniciar con el autorradio</string>
+    <string name="bridge_cp_location">Enviar la ubicación al iPhone</string>
+    <string name="bridge_cp_logs">Registros</string>
+    <string name="bridge_cp_debug_logs">Registros de depuración</string>
+    <string name="bridge_cp_frame_logs">Registros de fotogramas de vídeo</string>
+    <string name="bridge_cp_metrics">Métricas multimedia en pantalla</string>
+    <string name="bridge_cp_audio_capture">Captura de paquetes de audio</string>
+</resources>

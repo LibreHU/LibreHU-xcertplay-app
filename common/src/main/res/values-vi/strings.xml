@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vietnamese translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · Hình ảnh</string>
+    <string name="bridge_cp_scale">Tỷ lệ hình ảnh</string>
+    <string name="bridge_cp_fps">Khung hình mỗi giây</string>
+    <string name="bridge_cp_hevc_sw">Bộ giải mã HEVC phần mềm</string>
+    <string name="bridge_cp_width">Chiều rộng màn hình</string>
+    <string name="bridge_cp_size_basis">Kích thước màn hình theo</string>
+    <string name="bridge_cp_width_basis">chiều rộng</string>
+    <string name="bridge_cp_height_basis">chiều cao</string>
+    <string name="bridge_cp_rhd">Tay lái bên phải</string>
+    <string name="bridge_cp_hide_top">Ẩn thanh trên</string>
+    <string name="bridge_cp_hide_bottom">Ẩn thanh dưới</string>
+    <string name="bridge_cp_safe_outside">Vẽ ra ngoài vùng an toàn</string>
+    <string name="bridge_cp_gestures">Thêm cử chỉ vào cài đặt</string>
+    <string name="bridge_cp_sound">CarPlay · Âm thanh</string>
+    <string name="bridge_cp_buffer">Bộ đệm âm thanh đa phương tiện</string>
+    <string name="bridge_cp_mic">Độ khuếch đại micrô</string>
+    <string name="bridge_cp_channels">Ánh xạ kênh âm thanh nâng cao</string>
+    <string name="bridge_cp_wireless">CarPlay không dây</string>
+    <string name="bridge_cp_hotspot">Điểm phát sóng</string>
+    <string name="bridge_cp_hotspot_local">Điểm phát sóng cục bộ</string>
+    <string name="bridge_cp_hotspot_manual">Điểm phát sóng thủ công</string>
+    <string name="bridge_cp_band">Băng tần</string>
+    <string name="bridge_cp_auto">Tự động</string>
+    <string name="bridge_cp_channel">Kênh</string>
+    <string name="bridge_cp_channel_hint">0: tự động</string>
+    <string name="bridge_cp_security">Bảo mật</string>
+    <string name="bridge_cp_open">Mở</string>
+    <string name="bridge_cp_system">CarPlay · Hệ thống</string>
+    <string name="bridge_cp_mfi">Chip xác thực (MFi)</string>
+    <string name="bridge_cp_mfi_remote">Máy chủ từ xa</string>
+    <string name="bridge_cp_mfi_files">Tệp cục bộ</string>
+    <string name="bridge_cp_mfi_server">Máy chủ MFi</string>
+    <string name="bridge_cp_identity">Thông tin xe</string>
+    <string name="bridge_cp_manufacturer">Hãng sản xuất</string>
+    <string name="bridge_cp_model">Mẫu xe</string>
+    <string name="bridge_cp_oem">Nhãn OEM</string>
+    <string name="bridge_cp_start">Khởi động</string>
+    <string name="bridge_cp_boot">Khởi động cùng màn hình ô tô</string>
+    <string name="bridge_cp_location">Gửi vị trí đến iPhone</string>
+    <string name="bridge_cp_logs">Nhật ký</string>
+    <string name="bridge_cp_debug_logs">Nhật ký gỡ lỗi</string>
+    <string name="bridge_cp_frame_logs">Nhật ký khung hình video</string>
+    <string name="bridge_cp_metrics">Chỉ số đa phương tiện trên màn hình</string>
+    <string name="bridge_cp_audio_capture">Ghi gói âm thanh</string>
+</resources>

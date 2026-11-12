@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Czech translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · Obraz</string>
+    <string name="bridge_cp_scale">Měřítko obrazu</string>
+    <string name="bridge_cp_fps">Snímky za sekundu</string>
+    <string name="bridge_cp_hevc_sw">Softwarový dekodér HEVC</string>
+    <string name="bridge_cp_width">Šířka obrazovky</string>
+    <string name="bridge_cp_size_basis">Velikost obrazovky podle</string>
+    <string name="bridge_cp_width_basis">její šířky</string>
+    <string name="bridge_cp_height_basis">její výšky</string>
+    <string name="bridge_cp_rhd">Řízení vpravo</string>
+    <string name="bridge_cp_hide_top">Skrýt horní lištu</string>
+    <string name="bridge_cp_hide_bottom">Skrýt dolní lištu</string>
+    <string name="bridge_cp_safe_outside">Kreslit mimo bezpečnou oblast</string>
+    <string name="bridge_cp_gestures">Více gest do nastavení</string>
+    <string name="bridge_cp_sound">CarPlay · Zvuk</string>
+    <string name="bridge_cp_buffer">Zvuková vyrovnávací paměť médií</string>
+    <string name="bridge_cp_mic">Zisk mikrofonu</string>
+    <string name="bridge_cp_channels">Pokročilé mapování zvukových kanálů</string>
+    <string name="bridge_cp_wireless">Bezdrátový CarPlay</string>
+    <string name="bridge_cp_hotspot">Hotspot</string>
+    <string name="bridge_cp_hotspot_local">Místní hotspot</string>
+    <string name="bridge_cp_hotspot_manual">Ruční hotspot</string>
+    <string name="bridge_cp_band">Pásmo</string>
+    <string name="bridge_cp_auto">Automaticky</string>
+    <string name="bridge_cp_channel">Kanál</string>
+    <string name="bridge_cp_channel_hint">0: automaticky</string>
+    <string name="bridge_cp_security">Zabezpečení</string>
+    <string name="bridge_cp_open">Otevřená</string>
+    <string name="bridge_cp_system">CarPlay · Systém</string>
+    <string name="bridge_cp_mfi">Ověřovací čip (MFi)</string>
+    <string name="bridge_cp_mfi_remote">Vzdálený server</string>
+    <string name="bridge_cp_mfi_files">Místní soubory</string>
+    <string name="bridge_cp_mfi_server">Server MFi</string>
+    <string name="bridge_cp_identity">Identita auta</string>
+    <string name="bridge_cp_manufacturer">Výrobce</string>
+    <string name="bridge_cp_model">Model</string>
+    <string name="bridge_cp_oem">Označení OEM</string>
+    <string name="bridge_cp_start">Spuštění</string>
+    <string name="bridge_cp_boot">Spustit s autorádiem</string>
+    <string name="bridge_cp_location">Posílat polohu do iPhonu</string>
+    <string name="bridge_cp_logs">Protokoly</string>
+    <string name="bridge_cp_debug_logs">Ladicí protokoly</string>
+    <string name="bridge_cp_frame_logs">Protokoly snímků videa</string>
+    <string name="bridge_cp_metrics">Metriky médií na obrazovce</string>
+    <string name="bridge_cp_audio_capture">Zachytávání zvukových paketů</string>
+</resources>

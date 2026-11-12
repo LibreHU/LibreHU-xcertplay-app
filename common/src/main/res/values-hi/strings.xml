@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hindi translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · तस्वीर</string>
+    <string name="bridge_cp_scale">तस्वीर का स्केल</string>
+    <string name="bridge_cp_fps">फ़्रेम प्रति सेकंड</string>
+    <string name="bridge_cp_hevc_sw">HEVC सॉफ़्टवेयर डिकोडर</string>
+    <string name="bridge_cp_width">स्क्रीन की चौड़ाई</string>
+    <string name="bridge_cp_size_basis">स्क्रीन का आकार इसके आधार पर</string>
+    <string name="bridge_cp_width_basis">चौड़ाई</string>
+    <string name="bridge_cp_height_basis">ऊँचाई</string>
+    <string name="bridge_cp_rhd">दाईं ओर स्टीयरिंग</string>
+    <string name="bridge_cp_hide_top">ऊपरी पट्टी छिपाएँ</string>
+    <string name="bridge_cp_hide_bottom">निचली पट्टी छिपाएँ</string>
+    <string name="bridge_cp_safe_outside">सुरक्षित क्षेत्र के बाहर भी बनाएँ</string>
+    <string name="bridge_cp_gestures">सेटिंग्स के लिए और जेस्चर</string>
+    <string name="bridge_cp_sound">CarPlay · ध्वनि</string>
+    <string name="bridge_cp_buffer">मीडिया ऑडियो बफ़र</string>
+    <string name="bridge_cp_mic">माइक्रोफ़ोन गेन</string>
+    <string name="bridge_cp_channels">उन्नत ऑडियो चैनल मैपिंग</string>
+    <string name="bridge_cp_wireless">वायरलेस CarPlay</string>
+    <string name="bridge_cp_hotspot">हॉटस्पॉट</string>
+    <string name="bridge_cp_hotspot_local">लोकल हॉटस्पॉट</string>
+    <string name="bridge_cp_hotspot_manual">मैन्युअल हॉटस्पॉट</string>
+    <string name="bridge_cp_band">बैंड</string>
+    <string name="bridge_cp_auto">स्वचालित</string>
+    <string name="bridge_cp_channel">चैनल</string>
+    <string name="bridge_cp_channel_hint">0: स्वचालित</string>
+    <string name="bridge_cp_security">सुरक्षा</string>
+    <string name="bridge_cp_open">खुला</string>
+    <string name="bridge_cp_system">CarPlay · सिस्टम</string>
+    <string name="bridge_cp_mfi">प्रमाणीकरण चिप (MFi)</string>
+    <string name="bridge_cp_mfi_remote">रिमोट सर्वर</string>
+    <string name="bridge_cp_mfi_files">लोकल फ़ाइलें</string>
+    <string name="bridge_cp_mfi_server">MFi सर्वर</string>
+    <string name="bridge_cp_identity">कार की पहचान</string>
+    <string name="bridge_cp_manufacturer">निर्माता</string>
+    <string name="bridge_cp_model">मॉडल</string>
+    <string name="bridge_cp_oem">OEM लेबल</string>
+    <string name="bridge_cp_start">शुरुआत</string>
+    <string name="bridge_cp_boot">हेड यूनिट के साथ शुरू करें</string>
+    <string name="bridge_cp_location">iPhone को लोकेशन भेजें</string>
+    <string name="bridge_cp_logs">लॉग</string>
+    <string name="bridge_cp_debug_logs">डीबग लॉग</string>
+    <string name="bridge_cp_frame_logs">वीडियो फ़्रेम लॉग</string>
+    <string name="bridge_cp_metrics">स्क्रीन पर मीडिया मेट्रिक्स</string>
+    <string name="bridge_cp_audio_capture">ऑडियो पैकेट कैप्चर</string>
+</resources>

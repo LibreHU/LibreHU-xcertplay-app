@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · Изображение</string>
+    <string name="bridge_cp_scale">Масштаб изображения</string>
+    <string name="bridge_cp_fps">Кадров в секунду</string>
+    <string name="bridge_cp_hevc_sw">Программный декодер HEVC</string>
+    <string name="bridge_cp_width">Ширина экрана</string>
+    <string name="bridge_cp_size_basis">Размер экрана по</string>
+    <string name="bridge_cp_width_basis">ширине</string>
+    <string name="bridge_cp_height_basis">высоте</string>
+    <string name="bridge_cp_rhd">Правый руль</string>
+    <string name="bridge_cp_hide_top">Скрыть верхнюю панель</string>
+    <string name="bridge_cp_hide_bottom">Скрыть нижнюю панель</string>
+    <string name="bridge_cp_safe_outside">Рисовать за пределами безопасной зоны</string>
+    <string name="bridge_cp_gestures">Больше жестов в настройки</string>
+    <string name="bridge_cp_sound">CarPlay · Звук</string>
+    <string name="bridge_cp_buffer">Аудиобуфер медиа</string>
+    <string name="bridge_cp_mic">Усиление микрофона</string>
+    <string name="bridge_cp_channels">Расширенное распределение аудиоканалов</string>
+    <string name="bridge_cp_wireless">Беспроводной CarPlay</string>
+    <string name="bridge_cp_hotspot">Точка доступа</string>
+    <string name="bridge_cp_hotspot_local">Локальная точка доступа</string>
+    <string name="bridge_cp_hotspot_manual">Ручная точка доступа</string>
+    <string name="bridge_cp_band">Диапазон</string>
+    <string name="bridge_cp_auto">Автоматически</string>
+    <string name="bridge_cp_channel">Канал</string>
+    <string name="bridge_cp_channel_hint">0: автоматически</string>
+    <string name="bridge_cp_security">Защита</string>
+    <string name="bridge_cp_open">Открытая</string>
+    <string name="bridge_cp_system">CarPlay · Система</string>
+    <string name="bridge_cp_mfi">Чип аутентификации (MFi)</string>
+    <string name="bridge_cp_mfi_remote">Удалённый сервер</string>
+    <string name="bridge_cp_mfi_files">Локальные файлы</string>
+    <string name="bridge_cp_mfi_server">Сервер MFi</string>
+    <string name="bridge_cp_identity">Данные автомобиля</string>
+    <string name="bridge_cp_manufacturer">Производитель</string>
+    <string name="bridge_cp_model">Модель</string>
+    <string name="bridge_cp_oem">Метка OEM</string>
+    <string name="bridge_cp_start">Запуск</string>
+    <string name="bridge_cp_boot">Запускать вместе с магнитолой</string>
+    <string name="bridge_cp_location">Отправлять местоположение на iPhone</string>
+    <string name="bridge_cp_logs">Журналы</string>
+    <string name="bridge_cp_debug_logs">Отладочные журналы</string>
+    <string name="bridge_cp_frame_logs">Журналы видеокадров</string>
+    <string name="bridge_cp_metrics">Медиаметрики на экране</string>
+    <string name="bridge_cp_audio_capture">Захват аудиопакетов</string>
+</resources>

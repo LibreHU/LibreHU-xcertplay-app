@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Turkish translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · Görüntü</string>
+    <string name="bridge_cp_scale">Görüntü ölçeği</string>
+    <string name="bridge_cp_fps">Saniyedeki kare</string>
+    <string name="bridge_cp_hevc_sw">Yazılımsal HEVC kod çözücü</string>
+    <string name="bridge_cp_width">Ekran genişliği</string>
+    <string name="bridge_cp_size_basis">Ekran boyutu şuna göre:</string>
+    <string name="bridge_cp_width_basis">genişliği</string>
+    <string name="bridge_cp_height_basis">yüksekliği</string>
+    <string name="bridge_cp_rhd">Sağdan direksiyonlu</string>
+    <string name="bridge_cp_hide_top">Üst çubuğu gizle</string>
+    <string name="bridge_cp_hide_bottom">Alt çubuğu gizle</string>
+    <string name="bridge_cp_safe_outside">Güvenli alanın dışına çiz</string>
+    <string name="bridge_cp_gestures">Ayarlara daha fazla hareket</string>
+    <string name="bridge_cp_sound">CarPlay · Ses</string>
+    <string name="bridge_cp_buffer">Medya ses arabelleği</string>
+    <string name="bridge_cp_mic">Mikrofon kazancı</string>
+    <string name="bridge_cp_channels">Gelişmiş ses kanalı eşleme</string>
+    <string name="bridge_cp_wireless">Kablosuz CarPlay</string>
+    <string name="bridge_cp_hotspot">Erişim noktası</string>
+    <string name="bridge_cp_hotspot_local">Yerel erişim noktası</string>
+    <string name="bridge_cp_hotspot_manual">Manuel erişim noktası</string>
+    <string name="bridge_cp_band">Bant</string>
+    <string name="bridge_cp_auto">Otomatik</string>
+    <string name="bridge_cp_channel">Kanal</string>
+    <string name="bridge_cp_channel_hint">0: otomatik</string>
+    <string name="bridge_cp_security">Güvenlik</string>
+    <string name="bridge_cp_open">Açık</string>
+    <string name="bridge_cp_system">CarPlay · Sistem</string>
+    <string name="bridge_cp_mfi">Kimlik doğrulama çipi (MFi)</string>
+    <string name="bridge_cp_mfi_remote">Uzak sunucu</string>
+    <string name="bridge_cp_mfi_files">Yerel dosyalar</string>
+    <string name="bridge_cp_mfi_server">MFi sunucusu</string>
+    <string name="bridge_cp_identity">Araç kimliği</string>
+    <string name="bridge_cp_manufacturer">Üretici</string>
+    <string name="bridge_cp_model">Model</string>
+    <string name="bridge_cp_oem">OEM etiketi</string>
+    <string name="bridge_cp_start">Başlatma</string>
+    <string name="bridge_cp_boot">Multimedya ünitesiyle birlikte başlat</string>
+    <string name="bridge_cp_location">Konumu iPhone\'a gönder</string>
+    <string name="bridge_cp_logs">Günlükler</string>
+    <string name="bridge_cp_debug_logs">Hata ayıklama günlükleri</string>
+    <string name="bridge_cp_frame_logs">Video karesi günlükleri</string>
+    <string name="bridge_cp_metrics">Ekranda medya ölçümleri</string>
+    <string name="bridge_cp_audio_capture">Ses paketi yakalama</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ukrainian translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · Зображення</string>
+    <string name="bridge_cp_scale">Масштаб зображення</string>
+    <string name="bridge_cp_fps">Кадрів за секунду</string>
+    <string name="bridge_cp_hevc_sw">Програмний декодер HEVC</string>
+    <string name="bridge_cp_width">Ширина екрана</string>
+    <string name="bridge_cp_size_basis">Розмір екрана за</string>
+    <string name="bridge_cp_width_basis">шириною</string>
+    <string name="bridge_cp_height_basis">висотою</string>
+    <string name="bridge_cp_rhd">Праве кермо</string>
+    <string name="bridge_cp_hide_top">Сховати верхню панель</string>
+    <string name="bridge_cp_hide_bottom">Сховати нижню панель</string>
+    <string name="bridge_cp_safe_outside">Малювати поза безпечною зоною</string>
+    <string name="bridge_cp_gestures">Більше жестів до налаштувань</string>
+    <string name="bridge_cp_sound">CarPlay · Звук</string>
+    <string name="bridge_cp_buffer">Аудіобуфер медіа</string>
+    <string name="bridge_cp_mic">Підсилення мікрофона</string>
+    <string name="bridge_cp_channels">Розширений розподіл аудіоканалів</string>
+    <string name="bridge_cp_wireless">Бездротовий CarPlay</string>
+    <string name="bridge_cp_hotspot">Точка доступу</string>
+    <string name="bridge_cp_hotspot_local">Локальна точка доступу</string>
+    <string name="bridge_cp_hotspot_manual">Ручна точка доступу</string>
+    <string name="bridge_cp_band">Діапазон</string>
+    <string name="bridge_cp_auto">Автоматично</string>
+    <string name="bridge_cp_channel">Канал</string>
+    <string name="bridge_cp_channel_hint">0: автоматично</string>
+    <string name="bridge_cp_security">Захист</string>
+    <string name="bridge_cp_open">Відкрита</string>
+    <string name="bridge_cp_system">CarPlay · Система</string>
+    <string name="bridge_cp_mfi">Чип автентифікації (MFi)</string>
+    <string name="bridge_cp_mfi_remote">Віддалений сервер</string>
+    <string name="bridge_cp_mfi_files">Локальні файли</string>
+    <string name="bridge_cp_mfi_server">Сервер MFi</string>
+    <string name="bridge_cp_identity">Дані автомобіля</string>
+    <string name="bridge_cp_manufacturer">Виробник</string>
+    <string name="bridge_cp_model">Модель</string>
+    <string name="bridge_cp_oem">Мітка OEM</string>
+    <string name="bridge_cp_start">Запуск</string>
+    <string name="bridge_cp_boot">Запускати разом із магнітолою</string>
+    <string name="bridge_cp_location">Надсилати місцезнаходження на iPhone</string>
+    <string name="bridge_cp_logs">Журнали</string>
+    <string name="bridge_cp_debug_logs">Журнали налагодження</string>
+    <string name="bridge_cp_frame_logs">Журнали відеокадрів</string>
+    <string name="bridge_cp_metrics">Медіаметрики на екрані</string>
+    <string name="bridge_cp_audio_capture">Захоплення аудіопакетів</string>
+</resources>

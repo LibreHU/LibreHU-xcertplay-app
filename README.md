@@ -113,6 +113,13 @@ connecting to a local MFi chip for authentication.
 - A physical USB Host/OTG Android device and MFi hardware are required for
   hardware validation.
 
+## Languages
+
+The LibreHU strings of the app (`common/src/main/res`) are in English and French, plus 18 languages translated by AI
+(Claude), not yet reviewed by native speakers: Spanish, Italian, Portuguese (Portugal and Brazil), Dutch, Czech,
+Romanian, Russian, Ukrainian, Turkish, Korean, Chinese (Simplified and Traditional), Vietnamese, Thai, Hindi,
+Indonesian and Georgian. The app follows Android's language. Corrections welcome.
+
 ## Build
 
 On Windows PowerShell:

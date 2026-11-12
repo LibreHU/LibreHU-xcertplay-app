@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Georgian translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · გამოსახულება</string>
+    <string name="bridge_cp_scale">გამოსახულების მასშტაბი</string>
+    <string name="bridge_cp_fps">კადრი წამში</string>
+    <string name="bridge_cp_hevc_sw">HEVC-ის პროგრამული დეკოდერი</string>
+    <string name="bridge_cp_width">ეკრანის სიგანე</string>
+    <string name="bridge_cp_size_basis">ეკრანის ზომა განისაზღვროს</string>
+    <string name="bridge_cp_width_basis">სიგანით</string>
+    <string name="bridge_cp_height_basis">სიმაღლით</string>
+    <string name="bridge_cp_rhd">მარჯვენა საჭე</string>
+    <string name="bridge_cp_hide_top">ზედა ზოლის დამალვა</string>
+    <string name="bridge_cp_hide_bottom">ქვედა ზოლის დამალვა</string>
+    <string name="bridge_cp_safe_outside">უსაფრთხო არის გარეთ ხატვა</string>
+    <string name="bridge_cp_gestures">მეტი ჟესტი პარამეტრებისკენ</string>
+    <string name="bridge_cp_sound">CarPlay · ხმა</string>
+    <string name="bridge_cp_buffer">მედიის აუდიობუფერი</string>
+    <string name="bridge_cp_mic">მიკროფონის გაძლიერება</string>
+    <string name="bridge_cp_channels">აუდიოარხების გაფართოებული განაწილება</string>
+    <string name="bridge_cp_wireless">უსადენო CarPlay</string>
+    <string name="bridge_cp_hotspot">წვდომის წერტილი</string>
+    <string name="bridge_cp_hotspot_local">ლოკალური წვდომის წერტილი</string>
+    <string name="bridge_cp_hotspot_manual">ხელით წვდომის წერტილი</string>
+    <string name="bridge_cp_band">დიაპაზონი</string>
+    <string name="bridge_cp_auto">ავტომატური</string>
+    <string name="bridge_cp_channel">არხი</string>
+    <string name="bridge_cp_channel_hint">0: ავტომატური</string>
+    <string name="bridge_cp_security">უსაფრთხოება</string>
+    <string name="bridge_cp_open">ღია</string>
+    <string name="bridge_cp_system">CarPlay · სისტემა</string>
+    <string name="bridge_cp_mfi">ავთენტიფიკაციის ჩიპი (MFi)</string>
+    <string name="bridge_cp_mfi_remote">დისტანციური სერვერი</string>
+    <string name="bridge_cp_mfi_files">ლოკალური ფაილები</string>
+    <string name="bridge_cp_mfi_server">MFi სერვერი</string>
+    <string name="bridge_cp_identity">მანქანის მონაცემები</string>
+    <string name="bridge_cp_manufacturer">მწარმოებელი</string>
+    <string name="bridge_cp_model">მოდელი</string>
+    <string name="bridge_cp_oem">OEM იარლიყი</string>
+    <string name="bridge_cp_start">გაშვება</string>
+    <string name="bridge_cp_boot">მაგნიტოლასთან ერთად გაშვება</string>
+    <string name="bridge_cp_location">მდებარეობის გაგზავნა iPhone-ზე</string>
+    <string name="bridge_cp_logs">ჟურნალები</string>
+    <string name="bridge_cp_debug_logs">გამართვის ჟურნალები</string>
+    <string name="bridge_cp_frame_logs">ვიდეოკადრების ჟურნალები</string>
+    <string name="bridge_cp_metrics">მედიამეტრიკები ეკრანზე</string>
+    <string name="bridge_cp_audio_capture">აუდიოპაკეტების ჩაწერა</string>
+</resources>

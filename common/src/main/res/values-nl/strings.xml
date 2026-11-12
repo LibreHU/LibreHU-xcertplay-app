@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dutch translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · Beeld</string>
+    <string name="bridge_cp_scale">Beeldschaal</string>
+    <string name="bridge_cp_fps">Beelden per seconde</string>
+    <string name="bridge_cp_hevc_sw">HEVC-softwaredecoder</string>
+    <string name="bridge_cp_width">Schermbreedte</string>
+    <string name="bridge_cp_size_basis">Schermgrootte volgens</string>
+    <string name="bridge_cp_width_basis">de breedte</string>
+    <string name="bridge_cp_height_basis">de hoogte</string>
+    <string name="bridge_cp_rhd">Rechtsgestuurd</string>
+    <string name="bridge_cp_hide_top">Bovenbalk verbergen</string>
+    <string name="bridge_cp_hide_bottom">Onderbalk verbergen</string>
+    <string name="bridge_cp_safe_outside">Buiten het veilige gebied tekenen</string>
+    <string name="bridge_cp_gestures">Meer gebaren naar de instellingen</string>
+    <string name="bridge_cp_sound">CarPlay · Geluid</string>
+    <string name="bridge_cp_buffer">Audiobuffer voor media</string>
+    <string name="bridge_cp_mic">Microfoonversterking</string>
+    <string name="bridge_cp_channels">Geavanceerde toewijzing van audiokanalen</string>
+    <string name="bridge_cp_wireless">Draadloze CarPlay</string>
+    <string name="bridge_cp_hotspot">Hotspot</string>
+    <string name="bridge_cp_hotspot_local">Lokale hotspot</string>
+    <string name="bridge_cp_hotspot_manual">Handmatige hotspot</string>
+    <string name="bridge_cp_band">Band</string>
+    <string name="bridge_cp_auto">Automatisch</string>
+    <string name="bridge_cp_channel">Kanaal</string>
+    <string name="bridge_cp_channel_hint">0: automatisch</string>
+    <string name="bridge_cp_security">Beveiliging</string>
+    <string name="bridge_cp_open">Open</string>
+    <string name="bridge_cp_system">CarPlay · Systeem</string>
+    <string name="bridge_cp_mfi">Authenticatiechip (MFi)</string>
+    <string name="bridge_cp_mfi_remote">Externe server</string>
+    <string name="bridge_cp_mfi_files">Lokale bestanden</string>
+    <string name="bridge_cp_mfi_server">MFi-server</string>
+    <string name="bridge_cp_identity">Identiteit van de auto</string>
+    <string name="bridge_cp_manufacturer">Fabrikant</string>
+    <string name="bridge_cp_model">Model</string>
+    <string name="bridge_cp_oem">OEM-label</string>
+    <string name="bridge_cp_start">Starten</string>
+    <string name="bridge_cp_boot">Starten met de autoradio</string>
+    <string name="bridge_cp_location">Locatie naar de iPhone sturen</string>
+    <string name="bridge_cp_logs">Logboeken</string>
+    <string name="bridge_cp_debug_logs">Foutopsporingslogboeken</string>
+    <string name="bridge_cp_frame_logs">Logboeken van videoframes</string>
+    <string name="bridge_cp_metrics">Mediastatistieken op het scherm</string>
+    <string name="bridge_cp_audio_capture">Audiopakketten vastleggen</string>
+</resources>

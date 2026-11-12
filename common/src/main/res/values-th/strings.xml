@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Thai translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · ภาพ</string>
+    <string name="bridge_cp_scale">มาตราส่วนภาพ</string>
+    <string name="bridge_cp_fps">เฟรมต่อวินาที</string>
+    <string name="bridge_cp_hevc_sw">ตัวถอดรหัส HEVC แบบซอฟต์แวร์</string>
+    <string name="bridge_cp_width">ความกว้างหน้าจอ</string>
+    <string name="bridge_cp_size_basis">ขนาดหน้าจอตาม</string>
+    <string name="bridge_cp_width_basis">ความกว้าง</string>
+    <string name="bridge_cp_height_basis">ความสูง</string>
+    <string name="bridge_cp_rhd">พวงมาลัยขวา</string>
+    <string name="bridge_cp_hide_top">ซ่อนแถบด้านบน</string>
+    <string name="bridge_cp_hide_bottom">ซ่อนแถบด้านล่าง</string>
+    <string name="bridge_cp_safe_outside">วาดนอกพื้นที่ปลอดภัย</string>
+    <string name="bridge_cp_gestures">ท่าทางเพิ่มเติมไปยังการตั้งค่า</string>
+    <string name="bridge_cp_sound">CarPlay · เสียง</string>
+    <string name="bridge_cp_buffer">บัฟเฟอร์เสียงมีเดีย</string>
+    <string name="bridge_cp_mic">อัตราขยายไมโครโฟน</string>
+    <string name="bridge_cp_channels">การจับคู่ช่องเสียงขั้นสูง</string>
+    <string name="bridge_cp_wireless">CarPlay ไร้สาย</string>
+    <string name="bridge_cp_hotspot">ฮอตสปอต</string>
+    <string name="bridge_cp_hotspot_local">ฮอตสปอตในเครื่อง</string>
+    <string name="bridge_cp_hotspot_manual">ฮอตสปอตแบบกำหนดเอง</string>
+    <string name="bridge_cp_band">ย่านความถี่</string>
+    <string name="bridge_cp_auto">อัตโนมัติ</string>
+    <string name="bridge_cp_channel">ช่องสัญญาณ</string>
+    <string name="bridge_cp_channel_hint">0: อัตโนมัติ</string>
+    <string name="bridge_cp_security">ความปลอดภัย</string>
+    <string name="bridge_cp_open">เปิด</string>
+    <string name="bridge_cp_system">CarPlay · ระบบ</string>
+    <string name="bridge_cp_mfi">ชิปยืนยันตัวตน (MFi)</string>
+    <string name="bridge_cp_mfi_remote">เซิร์ฟเวอร์ระยะไกล</string>
+    <string name="bridge_cp_mfi_files">ไฟล์ในเครื่อง</string>
+    <string name="bridge_cp_mfi_server">เซิร์ฟเวอร์ MFi</string>
+    <string name="bridge_cp_identity">ข้อมูลรถ</string>
+    <string name="bridge_cp_manufacturer">ผู้ผลิต</string>
+    <string name="bridge_cp_model">รุ่น</string>
+    <string name="bridge_cp_oem">ป้าย OEM</string>
+    <string name="bridge_cp_start">การเริ่มต้น</string>
+    <string name="bridge_cp_boot">เริ่มพร้อมจอติดรถยนต์</string>
+    <string name="bridge_cp_location">ส่งตำแหน่งไปยัง iPhone</string>
+    <string name="bridge_cp_logs">บันทึก</string>
+    <string name="bridge_cp_debug_logs">บันทึกดีบัก</string>
+    <string name="bridge_cp_frame_logs">บันทึกเฟรมวิดีโอ</string>
+    <string name="bridge_cp_metrics">ค่าวัดมีเดียบนหน้าจอ</string>
+    <string name="bridge_cp_audio_capture">การดักจับแพ็กเก็ตเสียง</string>
+</resources>

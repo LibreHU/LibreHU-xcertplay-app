@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Korean translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · 화면</string>
+    <string name="bridge_cp_scale">화면 배율</string>
+    <string name="bridge_cp_fps">초당 프레임</string>
+    <string name="bridge_cp_hevc_sw">HEVC 소프트웨어 디코더</string>
+    <string name="bridge_cp_width">화면 너비</string>
+    <string name="bridge_cp_size_basis">화면 크기 기준</string>
+    <string name="bridge_cp_width_basis">너비</string>
+    <string name="bridge_cp_height_basis">높이</string>
+    <string name="bridge_cp_rhd">우핸들</string>
+    <string name="bridge_cp_hide_top">상단 바 숨기기</string>
+    <string name="bridge_cp_hide_bottom">하단 바 숨기기</string>
+    <string name="bridge_cp_safe_outside">안전 영역 밖에도 그리기</string>
+    <string name="bridge_cp_gestures">설정으로 더 많은 제스처</string>
+    <string name="bridge_cp_sound">CarPlay · 소리</string>
+    <string name="bridge_cp_buffer">미디어 오디오 버퍼</string>
+    <string name="bridge_cp_mic">마이크 게인</string>
+    <string name="bridge_cp_channels">고급 오디오 채널 매핑</string>
+    <string name="bridge_cp_wireless">무선 CarPlay</string>
+    <string name="bridge_cp_hotspot">핫스팟</string>
+    <string name="bridge_cp_hotspot_local">로컬 핫스팟</string>
+    <string name="bridge_cp_hotspot_manual">수동 핫스팟</string>
+    <string name="bridge_cp_band">대역</string>
+    <string name="bridge_cp_auto">자동</string>
+    <string name="bridge_cp_channel">채널</string>
+    <string name="bridge_cp_channel_hint">0: 자동</string>
+    <string name="bridge_cp_security">보안</string>
+    <string name="bridge_cp_open">개방</string>
+    <string name="bridge_cp_system">CarPlay · 시스템</string>
+    <string name="bridge_cp_mfi">인증 칩(MFi)</string>
+    <string name="bridge_cp_mfi_remote">원격 서버</string>
+    <string name="bridge_cp_mfi_files">로컬 파일</string>
+    <string name="bridge_cp_mfi_server">MFi 서버</string>
+    <string name="bridge_cp_identity">차량 정보</string>
+    <string name="bridge_cp_manufacturer">제조사</string>
+    <string name="bridge_cp_model">모델</string>
+    <string name="bridge_cp_oem">OEM 라벨</string>
+    <string name="bridge_cp_start">시작</string>
+    <string name="bridge_cp_boot">헤드 유닛과 함께 시작</string>
+    <string name="bridge_cp_location">iPhone으로 위치 보내기</string>
+    <string name="bridge_cp_logs">로그</string>
+    <string name="bridge_cp_debug_logs">디버그 로그</string>
+    <string name="bridge_cp_frame_logs">비디오 프레임 로그</string>
+    <string name="bridge_cp_metrics">화면에 미디어 지표 표시</string>
+    <string name="bridge_cp_audio_capture">오디오 패킷 캡처</string>
+</resources>

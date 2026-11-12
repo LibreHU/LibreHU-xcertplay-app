@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Romanian translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · Imagine</string>
+    <string name="bridge_cp_scale">Scara imaginii</string>
+    <string name="bridge_cp_fps">Cadre pe secundă</string>
+    <string name="bridge_cp_hevc_sw">Decodor HEVC software</string>
+    <string name="bridge_cp_width">Lățimea ecranului</string>
+    <string name="bridge_cp_size_basis">Dimensiunea ecranului după</string>
+    <string name="bridge_cp_width_basis">lățime</string>
+    <string name="bridge_cp_height_basis">înălțime</string>
+    <string name="bridge_cp_rhd">Volan pe dreapta</string>
+    <string name="bridge_cp_hide_top">Ascunde bara de sus</string>
+    <string name="bridge_cp_hide_bottom">Ascunde bara de jos</string>
+    <string name="bridge_cp_safe_outside">Desenează în afara zonei sigure</string>
+    <string name="bridge_cp_gestures">Mai multe gesturi spre setări</string>
+    <string name="bridge_cp_sound">CarPlay · Sunet</string>
+    <string name="bridge_cp_buffer">Buffer audio media</string>
+    <string name="bridge_cp_mic">Amplificarea microfonului</string>
+    <string name="bridge_cp_channels">Alocare avansată a canalelor audio</string>
+    <string name="bridge_cp_wireless">CarPlay wireless</string>
+    <string name="bridge_cp_hotspot">Hotspot</string>
+    <string name="bridge_cp_hotspot_local">Hotspot local</string>
+    <string name="bridge_cp_hotspot_manual">Hotspot manual</string>
+    <string name="bridge_cp_band">Bandă</string>
+    <string name="bridge_cp_auto">Automat</string>
+    <string name="bridge_cp_channel">Canal</string>
+    <string name="bridge_cp_channel_hint">0: automat</string>
+    <string name="bridge_cp_security">Securitate</string>
+    <string name="bridge_cp_open">Deschisă</string>
+    <string name="bridge_cp_system">CarPlay · Sistem</string>
+    <string name="bridge_cp_mfi">Cip de autentificare (MFi)</string>
+    <string name="bridge_cp_mfi_remote">Server la distanță</string>
+    <string name="bridge_cp_mfi_files">Fișiere locale</string>
+    <string name="bridge_cp_mfi_server">Server MFi</string>
+    <string name="bridge_cp_identity">Identitatea mașinii</string>
+    <string name="bridge_cp_manufacturer">Producător</string>
+    <string name="bridge_cp_model">Model</string>
+    <string name="bridge_cp_oem">Etichetă OEM</string>
+    <string name="bridge_cp_start">Pornire</string>
+    <string name="bridge_cp_boot">Pornește odată cu unitatea multimedia</string>
+    <string name="bridge_cp_location">Trimite locația la iPhone</string>
+    <string name="bridge_cp_logs">Jurnale</string>
+    <string name="bridge_cp_debug_logs">Jurnale de depanare</string>
+    <string name="bridge_cp_frame_logs">Jurnale ale cadrelor video</string>
+    <string name="bridge_cp_metrics">Statistici media pe ecran</string>
+    <string name="bridge_cp_audio_capture">Captură de pachete audio</string>
+</resources>

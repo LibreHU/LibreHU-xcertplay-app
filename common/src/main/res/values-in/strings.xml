@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Indonesian translation (LibreHU). Corrections welcome: https://github.com/LibreHU -->
+<resources>
+    <string name="bridge_cp_picture">CarPlay · Gambar</string>
+    <string name="bridge_cp_scale">Skala gambar</string>
+    <string name="bridge_cp_fps">Frame per detik</string>
+    <string name="bridge_cp_hevc_sw">Dekoder HEVC perangkat lunak</string>
+    <string name="bridge_cp_width">Lebar layar</string>
+    <string name="bridge_cp_size_basis">Ukuran layar berdasarkan</string>
+    <string name="bridge_cp_width_basis">lebarnya</string>
+    <string name="bridge_cp_height_basis">tingginya</string>
+    <string name="bridge_cp_rhd">Setir kanan</string>
+    <string name="bridge_cp_hide_top">Sembunyikan bilah atas</string>
+    <string name="bridge_cp_hide_bottom">Sembunyikan bilah bawah</string>
+    <string name="bridge_cp_safe_outside">Gambar di luar area aman</string>
+    <string name="bridge_cp_gestures">Lebih banyak gestur ke setelan</string>
+    <string name="bridge_cp_sound">CarPlay · Suara</string>
+    <string name="bridge_cp_buffer">Buffer audio media</string>
+    <string name="bridge_cp_mic">Penguatan mikrofon</string>
+    <string name="bridge_cp_channels">Pemetaan saluran audio lanjutan</string>
+    <string name="bridge_cp_wireless">CarPlay nirkabel</string>
+    <string name="bridge_cp_hotspot">Hotspot</string>
+    <string name="bridge_cp_hotspot_local">Hotspot lokal</string>
+    <string name="bridge_cp_hotspot_manual">Hotspot manual</string>
+    <string name="bridge_cp_band">Pita</string>
+    <string name="bridge_cp_auto">Otomatis</string>
+    <string name="bridge_cp_channel">Saluran</string>
+    <string name="bridge_cp_channel_hint">0: otomatis</string>
+    <string name="bridge_cp_security">Keamanan</string>
+    <string name="bridge_cp_open">Terbuka</string>
+    <string name="bridge_cp_system">CarPlay · Sistem</string>
+    <string name="bridge_cp_mfi">Cip autentikasi (MFi)</string>
+    <string name="bridge_cp_mfi_remote">Server jarak jauh</string>
+    <string name="bridge_cp_mfi_files">File lokal</string>
+    <string name="bridge_cp_mfi_server">Server MFi</string>
+    <string name="bridge_cp_identity">Identitas mobil</string>
+    <string name="bridge_cp_manufacturer">Produsen</string>
+    <string name="bridge_cp_model">Model</string>
+    <string name="bridge_cp_oem">Label OEM</string>
+    <string name="bridge_cp_start">Mulai</string>
+    <string name="bridge_cp_boot">Mulai bersama head unit</string>
+    <string name="bridge_cp_location">Kirim lokasi ke iPhone</string>
+    <string name="bridge_cp_logs">Log</string>
+    <string name="bridge_cp_debug_logs">Log debug</string>
+    <string name="bridge_cp_frame_logs">Log frame video</string>
+    <string name="bridge_cp_metrics">Metrik media di layar</string>
+    <string name="bridge_cp_audio_capture">Tangkapan paket audio</string>
+</resources>
