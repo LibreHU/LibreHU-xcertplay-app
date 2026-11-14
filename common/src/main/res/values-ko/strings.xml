@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">비디오 프레임 로그</string>
     <string name="bridge_cp_metrics">화면에 미디어 지표 표시</string>
     <string name="bridge_cp_audio_capture">오디오 패킷 캡처</string>
+    <string name="librehu_identity_from_service">LibreHU-service에서 설정됨(차량 이름, 제조사, 모델): iPhone이 받는 값입니다.</string>
 </resources>

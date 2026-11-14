@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">ვიდეოკადრების ჟურნალები</string>
     <string name="bridge_cp_metrics">მედიამეტრიკები ეკრანზე</string>
     <string name="bridge_cp_audio_capture">აუდიოპაკეტების ჩაწერა</string>
+    <string name="librehu_identity_from_service">დაყენებულია LibreHU-service-ში (მანქანის სახელი, მარკა და მოდელი): ამას იღებს iPhone.</string>
 </resources>

@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">视频帧日志</string>
     <string name="bridge_cp_metrics">屏幕显示媒体指标</string>
     <string name="bridge_cp_audio_capture">音频数据包捕获</string>
+    <string name="librehu_identity_from_service">在 LibreHU-service 中设置（车辆名称、品牌和型号）：iPhone 收到的就是这些。</string>
 </resources>

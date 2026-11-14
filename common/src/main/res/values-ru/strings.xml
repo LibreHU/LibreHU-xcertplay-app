@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">Журналы видеокадров</string>
     <string name="bridge_cp_metrics">Медиаметрики на экране</string>
     <string name="bridge_cp_audio_capture">Захват аудиопакетов</string>
+    <string name="librehu_identity_from_service">Задаётся в LibreHU-service (название, марка и модель автомобиля): именно это получает iPhone.</string>
 </resources>

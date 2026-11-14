@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">บันทึกเฟรมวิดีโอ</string>
     <string name="bridge_cp_metrics">ค่าวัดมีเดียบนหน้าจอ</string>
     <string name="bridge_cp_audio_capture">การดักจับแพ็กเก็ตเสียง</string>
+    <string name="librehu_identity_from_service">ตั้งค่าใน LibreHU-service (ชื่อ ยี่ห้อ และรุ่นรถ): นี่คือสิ่งที่ iPhone ได้รับ</string>
 </resources>

@@ -4120,18 +4120,32 @@ class CarPlayHostActivity : ComponentActivity() {
     @Composable
     private fun IdentitySettings() {
         SectionHeader(tr("settings.identity.vehicle"))
+        // LibreHU: the car described in LibreHU-service is what goes to the iPhone (sessionConfig, airPlayConfig);
+        // show it here, read-only, instead of this app's own values, which it replaces.
+        val car = LibreHuVehicle.current
+        val carMake = car?.make?.takeIf { it.isNotBlank() }
+        val carModel = car?.model?.takeIf { it.isNotBlank() }
+        val fromService = getString(R.string.librehu_identity_from_service)
         SettingsGroup {
             row {
-                FieldRow(tr("settings.identity.manufacturer"), manufacturer, {
-                    manufacturer = it
-                    updateResolutionMenu()
-                })
+                if (carMake != null) {
+                    FieldRow(tr("settings.identity.manufacturer"), carMake, {}, help = fromService, enabled = false)
+                } else {
+                    FieldRow(tr("settings.identity.manufacturer"), manufacturer, {
+                        manufacturer = it
+                        updateResolutionMenu()
+                    })
+                }
             }
             row {
-                FieldRow(tr("settings.identity.model"), model, {
-                    model = it
-                    updateResolutionMenu()
-                })
+                if (carModel != null) {
+                    FieldRow(tr("settings.identity.model"), carModel, {}, help = fromService, enabled = false)
+                } else {
+                    FieldRow(tr("settings.identity.model"), model, {
+                        model = it
+                        updateResolutionMenu()
+                    })
+                }
             }
             row {
                 FieldRow(tr("settings.identity.oem_label"), oemLabel, {

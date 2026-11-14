@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">Logboeken van videoframes</string>
     <string name="bridge_cp_metrics">Mediastatistieken op het scherm</string>
     <string name="bridge_cp_audio_capture">Audiopakketten vastleggen</string>
+    <string name="librehu_identity_from_service">Ingesteld in LibreHU-service (naam, merk en model van de auto): dat ontvangt de iPhone.</string>
 </resources>

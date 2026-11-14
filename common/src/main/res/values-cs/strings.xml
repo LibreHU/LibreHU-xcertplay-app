@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">Protokoly snímků videa</string>
     <string name="bridge_cp_metrics">Metriky médií na obrazovce</string>
     <string name="bridge_cp_audio_capture">Zachytávání zvukových paketů</string>
+    <string name="librehu_identity_from_service">Nastaveno v LibreHU-service (název, značka a model auta): to dostává iPhone.</string>
 </resources>

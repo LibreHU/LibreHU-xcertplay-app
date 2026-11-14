@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">Log frame video</string>
     <string name="bridge_cp_metrics">Metrik media di layar</string>
     <string name="bridge_cp_audio_capture">Tangkapan paket audio</string>
+    <string name="librehu_identity_from_service">Diatur di LibreHU-service (nama, merek, dan model mobil): itulah yang diterima iPhone.</string>
 </resources>

@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">वीडियो फ़्रेम लॉग</string>
     <string name="bridge_cp_metrics">स्क्रीन पर मीडिया मेट्रिक्स</string>
     <string name="bridge_cp_audio_capture">ऑडियो पैकेट कैप्चर</string>
+    <string name="librehu_identity_from_service">LibreHU-service में सेट (कार का नाम, कंपनी और मॉडल): iPhone को यही मिलता है।</string>
 </resources>

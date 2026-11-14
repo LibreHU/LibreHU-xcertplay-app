@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">Nhật ký khung hình video</string>
     <string name="bridge_cp_metrics">Chỉ số đa phương tiện trên màn hình</string>
     <string name="bridge_cp_audio_capture">Ghi gói âm thanh</string>
+    <string name="librehu_identity_from_service">Đặt trong LibreHU-service (tên, hãng và mẫu xe): đó là thông tin iPhone nhận được.</string>
 </resources>

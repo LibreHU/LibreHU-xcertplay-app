@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">Video karesi günlükleri</string>
     <string name="bridge_cp_metrics">Ekranda medya ölçümleri</string>
     <string name="bridge_cp_audio_capture">Ses paketi yakalama</string>
+    <string name="librehu_identity_from_service">LibreHU-service içinde ayarlanır (aracın adı, markası ve modeli): iPhone\'a giden budur.</string>
 </resources>

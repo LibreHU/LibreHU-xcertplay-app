@@ -1755,10 +1755,23 @@ class CarPlayController(
         if (smartPhones.isEmpty()) {
             throw IOException("No bonded PHONE_SMART devices found; pair an iPhone and retry")
         }
-        val directlyConnectedSmartPhones = smartPhones.filter(::isBluetoothDeviceConnected)
+        // LibreHU: an Android phone paired with the head unit is a PHONE_SMART too. Its RFCOMM attempt can only
+        // fail (15 s timeout, "read failed"), and it came before the iPhone. A phone whose services Android already
+        // knows (SDP, getUuids) without the iAP2 one is skipped; one with none known yet is still tried.
+        val iap2Uuid = UUID.fromString(IAP2_IPHONE_UUID)
+        val candidates = smartPhones.filter { device ->
+            val uuids = runCatching { device.uuids }.getOrNull()
+            val keep = uuids.isNullOrEmpty() || uuids.any { it?.uuid == iap2Uuid }
+            if (!keep) debugLog("wireless Bluetooth skipped name=${device.name ?: "unknown"} address=${device.address}: no iAP2 service")
+            keep
+        }
+        if (candidates.isEmpty()) {
+            throw IOException("No bonded iPhone found (no iAP2 service); pair an iPhone and retry")
+        }
+        val directlyConnectedSmartPhones = candidates.filter(::isBluetoothDeviceConnected)
         Log.i(
             IphoneCarPlayConfiguration.TAG,
-            "wireless Bluetooth bondedSmartPhones=${smartPhones.size} " +
+            "wireless Bluetooth bondedSmartPhones=${candidates.size} " +
                 "directlyConnected=${directlyConnectedSmartPhones.size}",
         )
         val connectedAddresses = if (directlyConnectedSmartPhones.isNotEmpty()) {
@@ -1768,7 +1781,7 @@ class CarPlayController(
                 it.address
             }
         }
-        return smartPhones.sortedWith(
+        return candidates.sortedWith(
             compareByDescending<BluetoothDevice> { it.address in connectedAddresses }
                 .thenBy { it.address },
         )

@@ -45,4 +45,5 @@
     <string name="bridge_cp_frame_logs">Jurnale ale cadrelor video</string>
     <string name="bridge_cp_metrics">Statistici media pe ecran</string>
     <string name="bridge_cp_audio_capture">Captură de pachete audio</string>
+    <string name="librehu_identity_from_service">Setat în LibreHU-service (numele, marca și modelul mașinii): asta primește iPhone-ul.</string>
 </resources>
