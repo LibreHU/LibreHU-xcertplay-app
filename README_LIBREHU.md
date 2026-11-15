@@ -93,6 +93,7 @@ commentaire.
 | `common/.../AirPlayPersistence.kt` | cible MFi par defaut = I2C, peripherique I2C par defaut = `auto` |
 | `common/.../MainActivity.kt` | auto-test MFi sur le bus trouve automatiquement |
 | `shared/.../orchestration/MfiRuntime.kt`, `CarPlayController.kt` | `auto` : chaque `/dev/i2c-N` accessible est sonde aux adresses 0x10 / 0x11 pour trouver la puce MFi |
+| `shared/.../transport/LinuxI2cTransport.kt` | **5 ms entre la sélection d'un registre et la lecture** (`SELECT_TO_READ_GAP_MILLIS`), comme le transport CH341 d'amont : la puce 2.0C refuse une lecture lancée moins de ~3 ms après la sélection. Sur l'UJC201 (`/dev/i2c-6`, 0x10), la longueur du certificat lue aussitôt était refusée 17 fois et chaque bloc de 128 octets à chaque essai : pas de CarPlay (essai mfipeek2 du 15/11/2026) |
 | `shared/.../orchestration/CarPlayController.kt` | **iPhone rebranché** : à la fin d'une session filaire (iPhone débranché, CarPlay quitté sur le téléphone, échec de la mise en route), USBMUX, iAP2, lecture des infos et VPN/NCM sont fermés et le contrôleur repasse en attente d'iPhone (2 s, puis jusqu'à 30 s si les essais échouent) ; un iPhone rebranché pendant la fermeture relance tout de suite. Avant, le contrôleur restait en phase de contrôle et ignorait le nouvel appareil USB jusqu'au redémarrage de l'appli |
 | `common/src/main/res/values/strings.xml` | nom « CarPlay » sous l'icone |
 | `shared/src/main/res/drawable/librehu_launcher_*.xml`, `shared/src/main/res/mipmap-anydpi-v26/ic_launcher*.xml` | icone originale et glyphe thémable |
@@ -101,6 +102,8 @@ commentaire.
 | `README.md`, `README_LIBREHU.md` | renvoi vers ce fichier ; ce fichier |
 
 ## Puce MFi de l'UJC201 (a valider sur l'unite)
+- Trouvee le 15/11/2026 : coprocesseur **2.0C** (version 0x05, protocole 2.0) sur `/dev/i2c-6`, adresse `0x10`, sous
+  LineageOS (essai `mfipeek2`, lecture seule) ; certificat lisible avec 5 ms entre selection et lecture (voir plus haut).
 - La puce d'authentification Apple est sur un bus I2C du SoC ; la ROM stock (`iapd`, `libcoprocessor.so`) lit le bus
   et l'adresse dans la **metazone** et ouvre `/dev/i2c-N` (voir `docs/projection_stock.md` du depot device). Choisir
   ce `/dev/i2c-N` dans les reglages (I2C natif), ou laisser `auto`.

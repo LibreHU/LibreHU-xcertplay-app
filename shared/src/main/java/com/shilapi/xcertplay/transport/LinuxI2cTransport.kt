@@ -21,6 +21,14 @@ class LinuxI2cTransport private constructor(
         synchronized(lock) {
             checkOpen()
             validateTransaction(address7Bit, writeData, readLength)
+            // LibreHU: the MFi 2.0C NACKs the read address when the START of a pure read follows the STOP of its
+            // register selection sooner than about 3 ms; the CH341 transport holds the bus idle for the same reason.
+            // /dev/i2c-6 of the UJC201 (2.0C at 0x10, 15/11/2026): the certificate length read at once after its
+            // selection was refused 17 times, a 128-byte certificate window every time (no CarPlay); read 10 ms after
+            // the selection, both answered at the first attempt.
+            if (writeData.isEmpty() && readLength > 0) {
+                sleepBusIdle(SELECT_TO_READ_GAP_MILLIS)
+            }
 
             try {
                 bridge.transaction(handle, address7Bit, writeData, readLength).also { response ->
@@ -47,6 +55,15 @@ class LinuxI2cTransport private constructor(
         }
     }
 
+    private fun sleepBusIdle(millis: Long) {
+        try {
+            Thread.sleep(millis)
+        } catch (interrupted: InterruptedException) {
+            Thread.currentThread().interrupt()
+            throw I2cTransportException.DeviceUnavailable("Interrupted while holding the I2C bus idle", interrupted)
+        }
+    }
+
     private fun checkOpen() {
         if (closed) {
             throw I2cTransportException.DeviceUnavailable("Linux I2C transport is closed")
@@ -55,6 +72,9 @@ class LinuxI2cTransport private constructor(
 
     companion object {
         private const val MAX_MESSAGE_LENGTH = 0xffff
+
+        /** LibreHU: idle time between a register selection and the pure read that follows (as Ch341I2cTransport). */
+        internal const val SELECT_TO_READ_GAP_MILLIS = 5L
         private val I2C_DEVICE_PATH = Regex("/dev/i2c-[0-9]+")
 
         /** Opens a Linux I2C device node. */

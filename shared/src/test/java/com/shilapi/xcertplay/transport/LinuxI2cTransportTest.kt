@@ -2,6 +2,7 @@ package com.shilapi.xcertplay.transport
 
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 
@@ -33,6 +34,26 @@ class LinuxI2cTransportTest {
             fail("expected closed transport")
         } catch (_: I2cTransportException.DeviceUnavailable) {
         }
+    }
+
+    @Test
+    fun pureReadWaitsForTheSelectToReadGapOnly() {
+        val selecting = LinuxI2cTransport.open("/dev/i2c-6", RecordingBridge())
+        val reading = LinuxI2cTransport.open("/dev/i2c-6", RecordingBridge(response = byteArrayOf(0x03, 0x8c.toByte())))
+
+        var start = System.nanoTime()
+        selecting.transaction(0x10, byteArrayOf(0x30), 0)
+        val selectNanos = System.nanoTime() - start
+
+        start = System.nanoTime()
+        assertArrayEquals(byteArrayOf(0x03, 0x8c.toByte()), reading.transaction(0x10, byteArrayOf(), 2))
+        val readNanos = System.nanoTime() - start
+
+        assertTrue(
+            "pure read must wait ${LinuxI2cTransport.SELECT_TO_READ_GAP_MILLIS} ms",
+            readNanos >= LinuxI2cTransport.SELECT_TO_READ_GAP_MILLIS * 1_000_000L,
+        )
+        assertTrue("register selection must not wait", selectNanos < LinuxI2cTransport.SELECT_TO_READ_GAP_MILLIS * 1_000_000L)
     }
 
     private class RecordingBridge(
