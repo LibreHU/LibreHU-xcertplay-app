@@ -1730,9 +1730,45 @@ class CarPlayController(
             if (hotspot === manager) hotspot = null
             closeBestEffort(hotspotMode.name) { manager.close() }
             if (isStaleWirelessRun(generation)) throw failure
+            // LibreHU: a named Wi-Fi Direct group (WifiP2pConfig with network name and passphrase) needs the
+            // supplicant HAL 1.2 from Android 10 on (SupplicantP2pIfaceHal.groupAdd -> addGroup_1_2); a vendor with
+            // the HAL 1.1, such as the UJC201's Android 9 one under LineageOS 17.1, refuses it ("createGroup failed").
+            // The LocalOnlyHotspot that Android 9 uses is tried then, instead of giving up.
+            if (hotspotMode == WirelessHotspotMode.WIFI_P2P) {
+                debugLog(
+                    "wireless WIFI_P2P hotspot failed (${failure.message ?: failure.javaClass.simpleName}), " +
+                        "falling back to LocalOnlyHotspot",
+                    failure,
+                )
+                return startFallbackLocalOnlyHotspot(generation, failure)
+            }
             throw IOException(
                 "Could not establish ${hotspotMode.name} hotspot: " +
                     (failure.message ?: failure.javaClass.simpleName),
+                failure,
+            )
+        }
+    }
+
+    /** LibreHU: LocalOnlyHotspot after a failed Wi-Fi P2P group (see [startWirelessHotspot]). */
+    private fun startFallbackLocalOnlyHotspot(
+        generation: Int,
+        p2pFailure: Exception,
+    ): WirelessHotspotInfo {
+        val manager = LocalOnlyHotspotManager(appContext)
+        hotspot = manager
+        return try {
+            manager.start(HOTSPOT_START_TIMEOUT_MILLIS).also {
+                debugLog("wireless LocalOnlyHotspot fallback started")
+            }
+        } catch (failure: Exception) {
+            if (hotspot === manager) hotspot = null
+            closeBestEffort(WirelessHotspotMode.LOCAL_ONLY_HOTSPOT.name) { manager.close() }
+            if (isStaleWirelessRun(generation)) throw failure
+            failure.addSuppressed(p2pFailure)
+            throw IOException(
+                "Could not establish WIFI_P2P hotspot (${p2pFailure.message ?: p2pFailure.javaClass.simpleName}) " +
+                    "nor LocalOnlyHotspot: " + (failure.message ?: failure.javaClass.simpleName),
                 failure,
             )
         }
