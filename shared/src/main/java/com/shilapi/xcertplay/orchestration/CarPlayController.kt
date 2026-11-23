@@ -36,6 +36,7 @@ import com.shilapi.xcertplay.iap2.message.Iap2NowPlayingAccumulator
 import com.shilapi.xcertplay.iap2.session.Iap2FileTransferReceiver
 import com.shilapi.xcertplay.iap2.session.Iap2Session
 import com.shilapi.xcertplay.iap2.wire.Iap2Frame
+import com.shilapi.xcertplay.librehu.IphoneCallEvents
 import com.shilapi.xcertplay.librehu.IphoneInfoBus
 import com.shilapi.xcertplay.media.CarPlayMediaSessionBridge
 import com.shilapi.xcertplay.mfi.Iap2MfiAuthenticationClient
@@ -430,6 +431,10 @@ class CarPlayController(
                 runCatching { onIphoneNotification(frame) }.onFailure { debugLog("Could not decode iAP2 0x${frame.messageId.toString(16)}", it) }
                 return
             }
+            IAP2_CALL_STATE_UPDATE -> {
+                runCatching { onCallStateUpdate(frame) }.onFailure { debugLog("Could not decode iAP2 CallStateUpdate", it) }
+                return
+            }
         }
         if (frame.messageId != NOW_PLAYING_UPDATE) return
         try {
@@ -437,6 +442,37 @@ class CarPlayController(
         } catch (error: RuntimeException) {
             debugLog("Could not decode iAP2 NowPlayingUpdate", error)
         }
+    }
+
+    /** LibreHU: calls already told to LibreHU-service, by key, with the time they were last seen. */
+    private val seenCalls = LinkedHashMap<String, Long>()
+
+    /**
+     * LibreHU: CallStateUpdate, with the parameters asked by StartCallStateUpdates (0, 1, 2, 3, 4, 11). What each one
+     * holds is in Apple's MFi specification, not public: a call is told to LibreHU-service the first time its key is
+     * seen (parameter 4, else 0), and forgotten after [CALL_FORGET_MILLIS] without updates. Only the one-byte values
+     * of parameters 2 and 3 are logged, never the strings (number, name), to tell incoming calls apart later.
+     */
+    private fun onCallStateUpdate(frame: Iap2Frame) {
+        val body = Iap2Messages.reader(frame)
+        val values = listOf(2, 3).mapNotNull { id ->
+            body.optionalRaw(id)?.takeIf { it.size == 1 }?.let { "$id=${it[0].toInt() and 0xff}" }
+        }
+        val key = (runCatching { body.optionalString(4) }.getOrNull() ?: runCatching { body.optionalString(0) }.getOrNull())
+            ?.takeIf { it.isNotEmpty() }
+        val now = android.os.SystemClock.elapsedRealtime()
+        val isNew = synchronized(seenCalls) {
+            seenCalls.entries.removeAll { now - it.value > CALL_FORGET_MILLIS }
+            if (key == null) {
+                false
+            } else {
+                val fresh = seenCalls.put(key, now) == null
+                while (seenCalls.size > MAX_SEEN_CALLS) seenCalls.remove(seenCalls.keys.first())
+                fresh
+            }
+        }
+        debugLog("iAP2 CallStateUpdate ${values.joinToString(" ")} key=${key != null} new=$isNew")
+        if (isNew) IphoneCallEvents.newCall()
     }
 
     /** LibreHU: DeviceInformationUpdate (name), PowerUpdate (battery), DeviceTransportIdentifier (Bluetooth). */
@@ -2223,6 +2259,9 @@ class CarPlayController(
         private const val IAP2_DEVICE_INFORMATION_UPDATE = 0x4e09
         private const val IAP2_DEVICE_TRANSPORT_IDENTIFIER = 0x4e0e
         private const val IAP2_POWER_UPDATE = 0xae01
+        private const val IAP2_CALL_STATE_UPDATE = 0x4155
+        private const val CALL_FORGET_MILLIS = 10 * 60_000L
+        private const val MAX_SEEN_CALLS = 20
         private const val DEVICE_INFO_INTERVAL_MILLIS = 60_000L
         private const val DEVICE_INFO_FIRST_DELAY_MILLIS = 10_000L
         private const val MEDIA_REMOTE_SEND_TIMEOUT_MILLIS = 2_000L

@@ -26,6 +26,8 @@ import kotlinx.coroutines.flow.asStateFlow
  * - **The iPhone's details** for LibreHU-service only ([ACTION_PHONE_INFO]): name, model, iOS, Bluetooth address,
  *   battery level / charging / external power, cycle count, temperature, capacities, voltage, current (Lockdown and
  *   iAP2, see `IphoneInfoBus`), `wired` (USB, else wireless); `connected` = false when the iPhone is gone.
+ * - **A new call** of the iPhone for LibreHU-service's front LEDs (`org.librehu.action.PROJECTION_NOTIFICATION`,
+ *   `source` = carplay, `kind` = call; see `IphoneCallEvents`), nothing about the call.
  *
  * The service's commands are accepted only from apps holding the signature permission
  * `<applicationId>.permission.CONFIGURE` (signed with the LibreHU key).
@@ -38,6 +40,7 @@ object LibreHuCarPlay {
     const val ACTION_SESSION_STATE = "org.librehu.carplay.SESSION_STATE"
     const val ACTION_PHONE_INFO = "org.librehu.carplay.PHONE_INFO"
     private const val SERVICE_PACKAGE = "org.librehu.service"
+    private const val ACTION_PROJECTION_NOTIFICATION = "org.librehu.action.PROJECTION_NOTIFICATION"
 
     /**
      * Launcher theme: dark and accent (ARGB); null without LibreHU Launcher. [retro]: the launcher's retro palette
@@ -84,6 +87,7 @@ object LibreHuCarPlay {
         val app = context.applicationContext
         val main = Handler(Looper.getMainLooper())
         IphoneInfoBus.listener = { info -> reportPhone(app, info) }
+        IphoneCallEvents.listener = { reportCall(app) }
         if (app.packageManager.resolveContentProvider(THEME_URI.authority!!, 0) != null) {
             Thread({ readTheme(app) }, "librehu-theme").start()
             runCatching {
@@ -139,6 +143,18 @@ object LibreHuCarPlay {
             IntentFilter(ACTION_SET_NIGHT_MODE),
             "${app.packageName}.permission.CONFIGURE",
         )
+    }
+
+    /** A new call of the iPhone to LibreHU-service (front LED blink); the service takes it from VEHICLE holders only. */
+    private fun reportCall(context: Context) {
+        runCatching {
+            context.sendBroadcast(
+                Intent(ACTION_PROJECTION_NOTIFICATION)
+                    .setPackage(SERVICE_PACKAGE)
+                    .putExtra("source", "carplay")
+                    .putExtra("kind", "call"),
+            )
+        }
     }
 
     /** The iPhone's details to LibreHU-service (its package only: name and Bluetooth address are personal). */
