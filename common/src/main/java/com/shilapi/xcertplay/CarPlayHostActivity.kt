@@ -566,9 +566,22 @@ class CarPlayHostActivity : ComponentActivity() {
     private var startAfterHandshakeReset = false
     private var restartGeneration = 0
     private var reconnectScheduled = false
-    private var reconnectAttempts = 0
-    /** Automatic retries ran out; the home screen offers a manual reconnect instead. */
-    private var reconnectExhausted by mutableStateOf(false)
+    // LibreHU: the retry budget is kept with the controller it restarts, outside this activity: a new
+    // activity (the old one destroyed, CarPlay opened again) used to start a fresh budget, so the failed
+    // bring-up went round again and again.
+    private var reconnectAttempts: Int
+        get() = CarPlayBackgroundSession.reconnectAttempts
+        set(value) {
+            CarPlayBackgroundSession.reconnectAttempts = value
+        }
+    private var reconnectExhaustedState by mutableStateOf(CarPlayBackgroundSession.reconnectExhausted)
+    /** Automatic retries ran out; the home screen shows the error and offers a manual reconnect instead. */
+    private var reconnectExhausted: Boolean
+        get() = reconnectExhaustedState
+        set(value) {
+            reconnectExhaustedState = value
+            CarPlayBackgroundSession.reconnectExhausted = value
+        }
     private var screenLogs by mutableStateOf<List<ScreenLogLine>>(emptyList())
     private val sessionLog get() = CarPlayBackgroundSession.log
     private var gestureSequenceActive = false
@@ -2376,10 +2389,12 @@ class CarPlayHostActivity : ComponentActivity() {
     private fun reconnectAfterLoss(reason: String) {
         if (shuttingDown.get() || menuOpen || handshakeResetInProgress) return
         if (reconnectScheduled || reconnectExhausted) return
-        if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+        // LibreHU: MAX_CONNECTION_ATTEMPTS bring-ups in all (the first one and the automatic retries), then
+        // the error stays on screen until the user reconnects.
+        if (reconnectAttempts + 1 >= MAX_CONNECTION_ATTEMPTS) {
             reconnectExhausted = true
-            setConnectionStage("$reason; stopped after $MAX_RECONNECT_ATTEMPTS attempts")
-            appendLog("$reason; stopped retrying after $MAX_RECONNECT_ATTEMPTS attempts, waiting for manual reconnect")
+            setConnectionStage("$reason; stopped after $MAX_CONNECTION_ATTEMPTS attempts")
+            appendLog("$reason; stopped retrying after $MAX_CONNECTION_ATTEMPTS attempts, waiting for manual reconnect")
             return
         }
         reconnectScheduled = true
@@ -2416,7 +2431,7 @@ class CarPlayHostActivity : ComponentActivity() {
     private fun reconnectManually() {
         if (!reconnectExhausted || shuttingDown.get() || menuOpen || handshakeResetInProgress) return
         reconnectExhausted = false
-        reconnectAttempts = 1
+        reconnectAttempts = 0
         restartCarPlay("Manual reconnect")
     }
 
@@ -2893,6 +2908,13 @@ class CarPlayHostActivity : ComponentActivity() {
 
     private fun failHandshake(title: String, detail: String) {
         val timeline = handshakeTimeline ?: return
+        // LibreHU: the steps logged just before the failure still wait for the next log frame. The failure
+        // goes on the newest step, so they are taken first; otherwise "Access point" turned red while the
+        // access point was ready and "Find iPhone" was the step that failed.
+        val queued = synchronized(pendingScreenLogsLock) {
+            pendingHandshakeLogs.toList().also { pendingHandshakeLogs.clear() }
+        }
+        queued.forEach { recordHandshake(it.generation, it.record, it.timestampMillis) }
         timeline.fail(title, detail, System.currentTimeMillis())
         lastAttemptFailure = timeline.failure?.let { "${it.title}: ${it.detail}" }
         notifyTimelineChanged()
@@ -3063,6 +3085,7 @@ class CarPlayHostActivity : ComponentActivity() {
                     logLines = screenLogs,
                     onOpenSettings = { openSettingsMenu() },
                     onRetry = if (reconnectExhausted) ::reconnectManually else null,
+                    failedAttempts = MAX_CONNECTION_ATTEMPTS,
                     // Read in the draw phase only: the fade redraws frames without recomposing.
                     modifier = Modifier.graphicsLayer { alpha = homeAlpha.value },
                 )
@@ -4527,7 +4550,8 @@ class CarPlayHostActivity : ComponentActivity() {
         const val RECONNECT_DELAY_MILLIS = 2_000L
         const val RECONNECT_MAX_DELAY_MILLIS = 30_000L
         const val RECONNECT_MAX_SHIFT = 4
-        const val MAX_RECONNECT_ATTEMPTS = 3
+        /** LibreHU: bring-ups in all before the error stays on screen (the first one and 2 automatic retries). */
+        const val MAX_CONNECTION_ATTEMPTS = 3
         const val IAP_TUNNEL_RECONNECT_DELAY_MILLIS = 15_000L
         const val CONTROLLER_CLOSE_TIMEOUT_MILLIS = 4_000L
         const val AUDIO_CAPTURE_DIRECTORY = "audio-captures"
@@ -4650,6 +4674,10 @@ class CarPlayViewAreas private constructor(
 /** Process-local hand-off for keeping the CarPlay session alive while no Activity is visible. */
 private object CarPlayBackgroundSession {
     val log = SessionLog()
+    /** LibreHU: automatic retries made since the last active session or manual reconnect. */
+    @Volatile var reconnectAttempts = 0
+    /** LibreHU: the retries ran out; the error stays on screen until a manual reconnect. */
+    @Volatile var reconnectExhausted = false
     private var audioFocusSession: AndroidMediaSink.AudioFocusSession? = null
 
     @Synchronized

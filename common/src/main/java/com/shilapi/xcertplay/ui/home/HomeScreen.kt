@@ -37,6 +37,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -102,6 +103,7 @@ import java.util.Locale
  *
  * [revision] must change whenever [timeline] is mutated; the model itself is not observable.
  * A non-null [onRetry] means automatic retries ran out: the status glyph becomes a retry button.
+ * LibreHU: the card then also says so, after [failedAttempts] attempts, with a labelled reconnect button.
  */
 @Composable
 fun HomeScreen(
@@ -113,6 +115,7 @@ fun HomeScreen(
     logLines: List<ScreenLogLine>,
     onOpenSettings: () -> Unit,
     onRetry: (() -> Unit)? = null,
+    failedAttempts: Int = 0,
     modifier: Modifier = Modifier,
 ) {
     val scheme = MaterialTheme.colorScheme
@@ -144,14 +147,14 @@ fun HomeScreen(
                 val heroWidth = (maxWidth * 0.4f).coerceIn(300.dp, 440.dp).coerceAtMost(maxWidth / 2)
                 Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(Space.s3)) {
                     Box(Modifier.width(heroWidth).fillMaxHeight().verticalScroll(rememberScrollState())) {
-                        HeroCard(timeline, revision, status, wireless, onRetry, Modifier.fillMaxWidth())
+                        HeroCard(timeline, revision, status, wireless, onRetry, failedAttempts, Modifier.fillMaxWidth())
                     }
                     LogPanel(timeline, revision, debugLogs, logLines, Modifier.weight(1f).fillMaxHeight())
                 }
             } else {
                 Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(Space.s3)) {
                     HeroCard(
-                        timeline, revision, status, wireless, onRetry,
+                        timeline, revision, status, wireless, onRetry, failedAttempts,
                         Modifier.fillMaxWidth().widthIn(max = 720.dp).align(Alignment.CenterHorizontally),
                     )
                     LogPanel(
@@ -176,6 +179,7 @@ private fun HeroCard(
     status: String,
     wireless: Boolean,
     onRetry: (() -> Unit)?,
+    failedAttempts: Int,
     modifier: Modifier,
 ) {
     val scheme = MaterialTheme.colorScheme
@@ -189,6 +193,8 @@ private fun HeroCard(
         else -> GlyphState.ACTIVE
     }
     val title = when {
+        failure != null && onRetry != null && failedAttempts > 0 ->
+            tr("home.failed_after_attempts", "count" to failedAttempts)
         failure != null -> failure.title
         done -> tr("home.connected")
         phase != null -> phaseTitle(phase)
@@ -237,11 +243,17 @@ private fun HeroCard(
                         style = MaterialTheme.typography.bodyMedium,
                         color = scheme.onPrimaryContainer.copy(alpha = 0.8f),
                         minLines = 2,
-                        maxLines = 2,
+                        // LibreHU: the whole error once the retries ran out; nothing re-measures the card then.
+                        maxLines = if (onRetry != null) 6 else 2,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(top = Space.s1),
                     )
                 }
+            }
+
+            // LibreHU: once the automatic retries ran out, a labelled way out, not only the round glyph.
+            if (onRetry != null) {
+                Button(onClick = onRetry) { Text(tr("home.retry")) }
             }
 
             FlowRow(

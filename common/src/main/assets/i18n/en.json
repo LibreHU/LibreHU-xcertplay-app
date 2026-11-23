@@ -16,6 +16,7 @@
   "home.transport.wireless": "Wireless",
   "home.previous_failure": "Last attempt: {reason}",
   "home.retry": "Reconnect",
+  "home.failed_after_attempts": "CarPlay failed after {count} attempts",
   "home.step_of": "Step {step} of {total}",
   "home.streams": "{count} streams",
   "home.log.title": "Connection log",

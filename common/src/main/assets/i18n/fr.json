@@ -20,6 +20,7 @@
   "home.transport.wireless": "Sans fil",
   "home.previous_failure": "Dernière tentative : {reason}",
   "home.retry": "Reconnecter",
+  "home.failed_after_attempts": "Échec de CarPlay après {count} tentatives",
   "home.step_of": "Étape {step} sur {total}",
   "home.streams": "{count} flux",
   "home.log.title": "Journal de connexion",
